@@ -8,9 +8,9 @@ import Navbar from "~/app/_components/Navbar";
 const page = () => {
   return (
     <>
-      <Navbar/>
+      <Navbar />
       <CodeEditor />
-      <FloatingActionBar/>
+      <FloatingActionBar />
     </>
   );
 };
