@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { FiUser } from "react-icons/fi";
+import { FiShare2 } from "react-icons/fi";
 import { PiSignInLight } from "react-icons/pi";
 import Image from "next/image";
 import Link from "next/link";
@@ -23,12 +23,19 @@ const Navbar = () => {
         />
       </div>
       <div className="flex gap-2">
-        <Button variant="outline" className="px-2 py-1 text-sm">
+        <Button
+          variant="outline"
+          className="border-0 bg-[#2D2D2D] px-2 py-1 text-sm text-white"
+        >
           Share
-          <FiUser size="15" className="ml-1" />
+          <FiShare2 size="16" className="ml-1" />
         </Button>
-        <Button className="px-2 py-1 text-[13px] text-white">
-          <PiSignInLight size="18" className="ml-1" />
+        <Button
+          variant="outline"
+          className="border-0 bg-[#2D2D2D] px-2 py-1 text-sm text-white"
+        >
+          SignIn
+          <PiSignInLight size="19" className="ml-1" />
         </Button>
       </div>
     </div>
