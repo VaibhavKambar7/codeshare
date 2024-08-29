@@ -1,15 +1,13 @@
 import "~/styles/globals.css";
-
 import { GeistSans } from "geist/font/sans";
 import { Inter as FontSans } from "next/font/google";
+import { cn } from "~/lib/utils";
+import { Providers } from "./providers/Providers";
 
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
 });
-
-import { TRPCReactProvider } from "~/trpc/react";
-import { cn } from "~/lib/utils";
 
 export const metadata = {
   title: "CodeShareX",
@@ -30,7 +28,7 @@ export default function RootLayout({
           fontSans.variable,
         )}
       >
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

@@ -77,14 +77,30 @@ const CodeEditor: React.FC = () => {
 
   return (
     <Editor
-      height="90vh"
+      height="100vh"
       defaultLanguage="javascript"
       theme="theme"
       value={debouncedValue}
       onMount={onMount}
       onChange={handleEditorChange}
       options={{ selectOnLineNumbers: true }}
-      loading={<Spinner size={40} color="black" />}
+      loading={
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "#2b2a2a",
+          }}
+        >
+          <Spinner size={40} color="white" />
+        </div>
+      }
     />
   );
 };

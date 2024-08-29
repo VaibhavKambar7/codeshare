@@ -37,6 +37,7 @@
     "monaco-editor": "^0.50.0",
     "monaco-themes": "^0.4.4",
     "next": "^14.2.1",
+    "next-auth": "^4.24.7",
     "npm": "^10.8.1",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
