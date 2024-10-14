@@ -9,31 +9,45 @@ import type * as monaco from "monaco-editor";
 import themes from "../lib/theme";
 import { api } from "~/trpc/react";
 import { useDebounce } from "use-debounce";
+import { useTheme } from "../context/themeContext";
 
-type Theme = monaco.editor.IStandaloneThemeData;
+type ThemeKey = keyof typeof themes;
 
 const CodeEditor: React.FC = () => {
   const [value, setValue] = useState<string>("//write some good code");
   const [debouncedValue] = useDebounce(value, 4000);
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const updateContentMutation = api.editor.updateContent.useMutation();
+  const { theme } = useTheme();
 
   useEffect(() => {
     const savedContent = localStorage.getItem("editorContent");
     if (savedContent) {
       setValue(savedContent);
     }
+  }, []);
 
+  useEffect(() => {
     loader
       .init()
       .then((monaco) => {
-        monaco.editor.defineTheme("theme", themes.Monokai as Theme);
-        monaco.editor.setTheme("theme");
+        if (themes.hasOwnProperty(theme)) {
+          const themeData = themes[
+            theme as ThemeKey
+          ] as monaco.editor.IStandaloneThemeData;
+          monaco.editor.defineTheme("custom-theme", themeData);
+          monaco.editor.setTheme("custom-theme");
+          if (editorRef.current) {
+            editorRef.current.updateOptions({ theme: "custom-theme" });
+          }
+        } else {
+          console.warn(`Theme "${theme}" not found in themes object.`);
+        }
       })
       .catch((error: Error) => {
         console.log(error.message);
       });
-  }, []);
+  }, [theme]);
 
   // eslint-disable-next-line
   const subscription = api.editor.onContentUpdate.useSubscription(undefined, {
@@ -79,7 +93,7 @@ const CodeEditor: React.FC = () => {
     <Editor
       height="100vh"
       defaultLanguage="javascript"
-      theme="theme"
+      theme="custom-theme"
       value={debouncedValue}
       onMount={onMount}
       onChange={handleEditorChange}
