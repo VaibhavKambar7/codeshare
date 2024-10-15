@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Code, FilePlus, Users, LogIn } from "lucide-react";
+import { Code, FilePlus, Users } from "lucide-react";
 import {
   AccordionContent,
   Accordion,
