@@ -47,7 +47,7 @@ export default function Component() {
 
   return (
     <div className="polka-dot relative flex min-h-screen flex-col text-gray-100">
-      <header className="flex h-12 items-center border-b border-gray-800 px-3 lg:px-5">
+      <header className="mt-2 flex h-12 items-center px-3 lg:px-5">
         <div className="flex flex-row items-center">
           <Link className="flex items-center " href="#">
             <Image
@@ -56,9 +56,7 @@ export default function Component() {
               height={24}
               alt="image"
             />
-            <span className="ml-2 text-lg font-bold text-blue-400">
-              CodeShare
-            </span>
+            <span className="ml-2 text-lg font-bold ">CodeShare</span>
           </Link>
         </div>
 
@@ -113,16 +111,16 @@ export default function Component() {
         </nav>
       </header>
       <main className="flex-1">
-        <section className="w-full py-16 md:py-24 lg:py-36">
+        <section className="lg:py-26 w-full py-16 md:py-24">
           <div className="container mx-auto px-3 md:px-4">
             <div className="flex flex-col items-center space-y-6 text-center">
               <div className="space-y-3">
-                <h1 className="text-2xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl lg:text-6xl">
-                  Welcome to CodeShare
-                </h1>
-                <p className="mx-auto max-w-[600px] text-base text-gray-400 md:text-lg lg:text-xl">
-                  Collaborate on code in real-time. Share, edit, and create
-                  together.
+                <div className="text-[15px] font-bold tracking-tight text-white sm:text-4xl md:text-5xl lg:text-6xl">
+                  Collaborate on code with developers{" "}
+                </div>
+                <p className="custom-font mx-auto max-w-[600px] text-base text-gray-400 md:text-lg lg:text-xl">
+                  Share, edit, and create together as you connect with fellow
+                  developers and bring your ideas to life.{" "}
                 </p>
               </div>
               <div className="y-4 space-x-4">
@@ -133,6 +131,9 @@ export default function Component() {
                   <FilePlus className="mr-2 h-6 w-6" />
                   New File
                 </Button>
+              </div>
+              <div className="custom-font text-gray-400">
+                No sign up. Free. Forever ❤️
               </div>
               <div className="mt-4 pr-80">
                 <Image
