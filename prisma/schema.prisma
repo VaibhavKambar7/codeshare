@@ -13,18 +13,18 @@ datasource db {
 
 model User {
   id        String   @id @default(cuid())
-  email     String   @unique
+  email     String?  @unique
   name      String?
-  file      File[]   @relation("UserFiles")
+  files     File[]   @relation("UserFiles")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model File {
   id        String   @id @default(cuid())
-  title     String
-  content   String
-  link      String
+  title     String?
+  content   String?
+  link      String   @unique
   ownerId   String?
   owner     User?    @relation("UserFiles", fields: [ownerId], references: [id])
   createdAt DateTime @default(now())

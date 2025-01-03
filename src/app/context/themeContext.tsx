@@ -8,6 +8,8 @@ import React, {
 interface ThemeContextType {
   theme: string;
   setTheme: (theme: string) => void;
+  title: string;
+  setTitle: (theme: string) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -15,10 +17,11 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [theme, setTheme] = useState<string>("GitHubDark"); // Default theme
+  const [theme, setTheme] = useState<string>("GitHubDark");
+  const [title, setTitle] = useState<string>("Untitled");
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+    <ThemeContext.Provider value={{ theme, setTheme, title, setTitle }}>
       {children}
     </ThemeContext.Provider>
   );

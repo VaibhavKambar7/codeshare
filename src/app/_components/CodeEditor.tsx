@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useRef, useState } from "react";
 import Editor, {
   loader,
@@ -6,24 +8,38 @@ import Editor, {
 } from "@monaco-editor/react";
 import { Spinner } from "./ui/spinner";
 import type * as monaco from "monaco-editor";
-import themes from "../lib/theme";
+import themes from "../../lib/theme";
 import { api } from "~/trpc/react";
 import { useDebounce } from "use-debounce";
 import { useTheme } from "../context/themeContext";
+import { useSession } from "next-auth/react";
+import {
+  DEBOUNCE_TIME,
+  SAVE_PERIODIC_NEW_FILE_DATA_TIME,
+} from "~/lib/constants";
+import type { z } from "zod";
+import type { fileDataSchema, userDataSchema } from "~/lib/types";
 
 type ThemeKey = keyof typeof themes;
 
-const CodeEditor: React.FC = () => {
+interface CodeEditorProps {
+  slug: string | string[] | undefined;
+}
+
+const CodeEditor: React.FC<CodeEditorProps> = ({ slug }) => {
   const [value, setValue] = useState<string>("//write some good code");
-  const [debouncedValue] = useDebounce(value, 4000);
+  const [debouncedValue] = useDebounce(value, DEBOUNCE_TIME);
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
+  const lastUpdateRef = useRef<string>("");
   const updateContentMutation = api.editor.updateContent.useMutation();
-  const { theme } = useTheme();
+  const { theme, title } = useTheme();
+  const { data } = useSession();
 
   useEffect(() => {
     const savedContent = localStorage.getItem("editorContent");
     if (savedContent) {
       setValue(savedContent);
+      lastUpdateRef.current = savedContent;
     }
   }, []);
 
@@ -40,29 +56,28 @@ const CodeEditor: React.FC = () => {
           if (editorRef.current) {
             editorRef.current.updateOptions({ theme: "custom-theme" });
           }
-        } else {
-          console.warn(`Theme "${theme}" not found in themes object.`);
         }
       })
-      .catch((error: Error) => {
-        console.log(error.message);
-      });
+      .catch(console.error);
   }, [theme]);
 
-  // eslint-disable-next-line
   const subscription = api.editor.onContentUpdate.useSubscription(undefined, {
     onData: (newContent: string) => {
-      if (newContent !== value) {
+      if (newContent !== lastUpdateRef.current) {
+        lastUpdateRef.current = newContent;
         setValue(newContent);
         if (editorRef.current) {
+          const position = editorRef.current.getPosition();
           editorRef.current.setValue(newContent);
+          if (position) editorRef.current.setPosition(position);
         }
       }
     },
   });
 
   const handleEditorChange: OnChange = (newValue) => {
-    if (newValue !== undefined) {
+    if (newValue && newValue !== lastUpdateRef.current) {
+      lastUpdateRef.current = newValue;
       setValue(newValue);
       localStorage.setItem("editorContent", newValue);
       updateContentMutation.mutate(newValue);
@@ -72,46 +87,51 @@ const CodeEditor: React.FC = () => {
   const onMount: OnMount = (editor) => {
     editorRef.current = editor;
     editor.focus();
-
-    const updateEditorValue = () => {
-      if (
-        editorRef.current &&
-        debouncedValue !== editorRef.current.getValue()
-      ) {
-        editorRef.current.setValue(debouncedValue);
-      }
-    };
-
-    updateEditorValue();
   };
 
+  type UserData = z.infer<typeof userDataSchema>;
+  type FileData = z.infer<typeof fileDataSchema>;
+
+  const { mutate: saveUserFile } =
+    api.userFile.createUserFileMutation.useMutation({
+      onError: () => console.log("error saving file"),
+      onSettled: () => console.log("file saved"),
+    });
+
   useEffect(() => {
-    console.log("Editor value updated:", value);
-  }, [value]);
+    const intervalId = setInterval(() => {
+      if (typeof slug === "string" && data) {
+        const userData: UserData = {
+          name: data.user?.name ?? null,
+          email: data.user?.email ?? null,
+        };
+
+        const fileData: FileData = {
+          title,
+          content: debouncedValue,
+          link: slug,
+        };
+
+        if (fileData.content && fileData.link) {
+          saveUserFile({ userData, fileData });
+        }
+      }
+    }, SAVE_PERIODIC_NEW_FILE_DATA_TIME);
+
+    return () => clearInterval(intervalId);
+  }, [data, debouncedValue, saveUserFile, slug, title]);
 
   return (
     <Editor
       height="100vh"
       defaultLanguage="javascript"
       theme="custom-theme"
-      value={debouncedValue}
+      value={value}
       onMount={onMount}
       onChange={handleEditorChange}
       options={{ selectOnLineNumbers: true }}
       loading={
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "#2b2a2a",
-          }}
-        >
+        <div className="absolute inset-0 flex items-center justify-center bg-[#2b2a2a]">
           <Spinner size={40} color="white" />
         </div>
       }

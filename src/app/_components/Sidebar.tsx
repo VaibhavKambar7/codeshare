@@ -6,7 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import themes from "../lib/theme";
+import themes from "../../lib/theme";
 import { useTheme } from "../context/themeContext";
 
 const Sidebar = () => {
