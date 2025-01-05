@@ -5,26 +5,34 @@ import { createTRPCRouter, publicProcedure } from "../trpc";
 import { fileDataSchema, userDataSchema } from "~/lib/types";
 import { TRPCError } from "@trpc/server";
 
+interface ContentUpdate {
+  room: string;
+  content: string;
+}
+
 const ee = new EventEmitter();
 
 export const editorRouter = createTRPCRouter({
-  onContentUpdate: publicProcedure.subscription(() => {
-    return observable<string>((emit) => {
-      const onContentUpdate = (content: string) => {
-        emit.next(content);
-      };
-
-      ee.on("contentUpdate", onContentUpdate);
-
-      return () => {
-        ee.off("contentUpdate", onContentUpdate);
-      };
-    });
-  }),
-
-  updateContent: publicProcedure.input(z.string()).mutation(({ input }) => {
-    ee.emit("contentUpdate", input);
-  }),
+  onContentUpdate: publicProcedure
+    .input(z.string())
+    .subscription(({ input: roomId }) => {
+      return observable<string>((emit) => {
+        const onContentUpdate = (update: ContentUpdate) => {
+          if (update.room === roomId) {
+            emit.next(update.content);
+          }
+        };
+        ee.on("contentUpdate", onContentUpdate);
+        return () => {
+          ee.off("contentUpdate", onContentUpdate);
+        };
+      });
+    }),
+  updateContent: publicProcedure
+    .input(z.object({ room: z.string(), content: z.string() }))
+    .mutation(({ input }) => {
+      ee.emit("contentUpdate", input);
+    }),
 });
 
 export const userFileRouter = createTRPCRouter({

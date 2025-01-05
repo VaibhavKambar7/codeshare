@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useRef, useState } from "react";
 import Editor, {
   loader,
@@ -23,7 +21,7 @@ import type { fileDataSchema, userDataSchema } from "~/lib/types";
 type ThemeKey = keyof typeof themes;
 
 interface CodeEditorProps {
-  slug: string | string[] | undefined;
+  slug: string;
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = ({ slug }) => {
@@ -36,7 +34,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ slug }) => {
   const { data } = useSession();
 
   useEffect(() => {
-    const savedContent = localStorage.getItem("editorContent");
+    const savedContent = localStorage.getItem(`editorContent_${slug}`);
     if (savedContent) {
       setValue(savedContent);
       lastUpdateRef.current = savedContent;
@@ -61,7 +59,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ slug }) => {
       .catch(console.error);
   }, [theme]);
 
-  const subscription = api.editor.onContentUpdate.useSubscription(undefined, {
+  const subscription = api.editor.onContentUpdate.useSubscription(slug, {
     onData: (newContent: string) => {
       if (newContent !== lastUpdateRef.current) {
         lastUpdateRef.current = newContent;
@@ -79,8 +77,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ slug }) => {
     if (newValue && newValue !== lastUpdateRef.current) {
       lastUpdateRef.current = newValue;
       setValue(newValue);
-      localStorage.setItem("editorContent", newValue);
-      updateContentMutation.mutate(newValue);
+      localStorage.setItem(`editorContent_${slug}`, newValue);
+      updateContentMutation.mutate({ room: slug, content: newValue });
     }
   };
 

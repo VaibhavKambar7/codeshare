@@ -1,4 +1,3 @@
-// contexts/WebSocketContext.tsx
 "use client";
 
 import React, {
@@ -11,23 +10,28 @@ import React, {
 
 interface WebSocketContextType {
   activeUsers: number;
+  currentRoom: string | null;
 }
 
 interface Message {
   type: string;
   payload: number;
+  room: string;
 }
 
 export const WebSocketContext = createContext<WebSocketContextType>({
   activeUsers: 0,
+  currentRoom: null,
 });
 
 export const useWebSocket = () => useContext(WebSocketContext);
 
 export const WebSocketProvider = ({
   children,
+  roomId,
 }: {
   children: React.ReactNode;
+  roomId: string;
 }) => {
   const [activeUsers, setActiveUsers] = useState(0);
   const wsRef = useRef<WebSocket | null>(null);
@@ -41,15 +45,25 @@ export const WebSocketProvider = ({
       const ws = new WebSocket("ws://localhost:9898");
       wsRef.current = ws;
 
+      ws.onopen = () => {
+        ws.send(
+          JSON.stringify({
+            type: "INIT",
+            id: crypto.randomUUID(),
+            room: roomId,
+          }),
+        );
+      };
+
       ws.onmessage = (event) => {
         if (!mounted) return;
         try {
           const data = JSON.parse(event.data as string) as Message;
-          if (data.type === "ACTIVE_USERS") {
+          if (data.type === "ACTIVE_USERS" && data.room === roomId) {
             setActiveUsers(data.payload);
           }
         } catch (error) {
-          console.error("Error parsing WebSocket message:", error);
+          console.error(error);
         }
       };
 
@@ -68,10 +82,10 @@ export const WebSocketProvider = ({
         wsRef.current = null;
       }
     };
-  }, []);
+  }, [roomId]);
 
   return (
-    <WebSocketContext.Provider value={{ activeUsers }}>
+    <WebSocketContext.Provider value={{ activeUsers, currentRoom: roomId }}>
       {children}
     </WebSocketContext.Provider>
   );

@@ -59,6 +59,7 @@
     "zod": "^3.23.3"
   },
   "devDependencies": {
+    "@convergencelabs/monaco-collab-ext": "^0.4.0",
     "@types/eslint": "^8.56.2",
     "@types/lodash": "^4.17.7",
     "@types/node": "^20.11.20",

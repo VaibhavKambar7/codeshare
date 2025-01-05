@@ -1,11 +1,11 @@
-// wsServer.ts
 import { applyWSSHandler } from "@trpc/server/adapters/ws";
-import { WebSocketServer } from "ws";
+import { WebSocketServer, WebSocket } from "ws";
 import { appRouter } from "~/server/api/root";
 import { type CreateWSSContextFnOptions } from "@trpc/server/adapters/ws";
 import { createTRPCContext } from "./api/trpc";
 
 const activeConnections = new Set<string>();
+const rooms = new Map<string, Set<string>>();
 
 const createContext = async ({ req, res }: CreateWSSContextFnOptions) => {
   const headers = new Headers();
@@ -27,24 +27,40 @@ const handler = applyWSSHandler({
 interface InitMessage {
   type: string;
   id: string;
+  room: string;
 }
 
-const broadcastActiveUsers = () => {
-  const activeUsers = activeConnections.size;
-  console.log("🚀 Active Users:", activeUsers);
+interface ExtendedWebSocket extends WebSocket {
+  roomId?: string;
+}
+
+const broadcastActiveUsers = (roomId: string) => {
+  const room = rooms.get(roomId);
+
+  if (!room) return;
+
+  const activeUsers = room.size;
+
+  console.log(`Broadcasting active users: ${activeUsers}`);
 
   const message = JSON.stringify({
     type: "ACTIVE_USERS",
     payload: activeUsers,
+    room: roomId,
   });
 
   wss.clients.forEach((client) => {
-    client.send(message);
+    const extendedClient = client as ExtendedWebSocket;
+    if (extendedClient.roomId === roomId) {
+      extendedClient.send(message);
+    }
   });
 };
 
 wss.on("connection", (ws) => {
+  const extendedWs = ws as ExtendedWebSocket;
   let connectionId: string | undefined;
+  let currentRoom: string | undefined;
 
   ws.on("message", (msg) => {
     try {
@@ -57,10 +73,22 @@ wss.on("connection", (ws) => {
       const data = JSON.parse(message) as InitMessage;
       if (data.type === "INIT") {
         connectionId = data.id;
-        if (!activeConnections.has(connectionId)) {
-          activeConnections.add(connectionId);
-          console.log(`+ + Connection (${activeConnections.size})`);
-          broadcastActiveUsers();
+        currentRoom = data.room;
+        extendedWs.roomId = currentRoom;
+
+        if (!rooms.has(currentRoom)) {
+          rooms.set(currentRoom, new Set());
+        }
+
+        const room = rooms.get(currentRoom);
+
+        // console.log(`+ Connection (${connectionId}) (${currentRoom})`);
+        // console.log(`+ Connection  Room(${room})`);
+
+        if (room && !room.has(connectionId)) {
+          room.add(connectionId);
+          console.log(`+ + Room (${currentRoom}) (${room.size})`);
+          broadcastActiveUsers(currentRoom);
         }
       }
     } catch (e) {
@@ -69,18 +97,22 @@ wss.on("connection", (ws) => {
   });
 
   ws.on("close", () => {
-    if (connectionId) {
-      activeConnections.delete(connectionId);
-      console.log(`- - Connection (${activeConnections.size})`);
-      broadcastActiveUsers();
+    if (connectionId && currentRoom) {
+      const room = rooms.get(currentRoom);
+      if (room) {
+        room.delete(connectionId);
+        broadcastActiveUsers(currentRoom);
+        if (room.size === 0) {
+          rooms.delete(currentRoom);
+        }
+      }
     }
   });
 });
 
 process.on("SIGTERM", () => {
-  console.log("SIGTERM");
   handler.broadcastReconnectNotification();
-  activeConnections.clear();
+  rooms.clear();
   wss.close();
 });
 
