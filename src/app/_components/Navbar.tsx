@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { FiShare2 } from "react-icons/fi";
+import { FiShare2, FiCopy, FiCheck } from "react-icons/fi";
 import { PiSignInLight } from "react-icons/pi";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,112 +9,150 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import { useTheme } from "../context/themeContext";
 import { useWebSocket } from "../context/webSocketContext";
 import { FaUser } from "react-icons/fa6";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { motion, AnimatePresence } from "framer-motion";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
 const Navbar = () => {
   const { title, setTitle } = useTheme();
-  const { status } = useSession();
+  const { data, status } = useSession();
   const { activeUsers } = useWebSocket();
-  const wsRef = useRef<WebSocket | null>(null);
-  const connectionIdRef = useRef<string>(
-    `tab_${Date.now()}_${Math.random().toString(36).slice(2)}`,
-  );
+  const [isCopied, setIsCopied] = useState(false);
+  const [urlToCopy, setUrlToCopy] = useState("");
 
-  // interface Message {
-  //   type: string;
-  //   payload: number;
-  // }
-
-  useEffect(() => {
-    const connectWebSocket = () => {
-      if (wsRef.current?.readyState === WebSocket.OPEN) return;
-
-      const ws = new WebSocket("ws://localhost:9898");
-      wsRef.current = ws;
-
-      ws.onopen = () => {
-        ws.send(
-          JSON.stringify({
-            type: "INIT",
-            id: connectionIdRef.current,
-          }),
-        );
-      };
-
-      // ws.onmessage = (event) => {
-      //   try {
-      //     const data = JSON.parse(event.data as string) as Message;
-      //     if (data.type === "ACTIVE_USERS") {
-      //       setActiveUsers(data.payload);
-      //     }
-      //   } catch (error) {
-      //     console.error("Error parsing WebSocket message:", error);
-      //   }
-      // };
-
-      ws.onclose = () => {
-        setTimeout(connectWebSocket, 3000);
-      };
-    };
-
-    connectWebSocket();
-
-    return () => {
-      if (wsRef.current) {
-        wsRef.current.close();
-        wsRef.current = null;
-      }
-    };
-  }, []);
+  const image = data?.user?.image;
 
   const handleSignin = () => signIn("google");
   const handleSignout = () => signOut();
 
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy URL:", err);
+    }
+  };
+
   return (
-    <div className="h-18 flex items-center justify-between bg-[#1f1e1e] p-3">
-      <div className="flex items-center gap-3">
-        <Link href="/">
-          <Image src="/assets/coding.png" alt="logo" width="40" height="40" />
+    <nav className="flex h-16 items-center justify-between bg-[#1f1e1e] px-4 shadow-md">
+      <div className="flex items-center gap-6">
+        <Link href="/" className="transition-opacity hover:opacity-80">
+          <Image
+            src="/assets/coding.png"
+            alt="logo"
+            width="36"
+            height="36"
+            className="rounded-md"
+          />
         </Link>
         <Input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="border-none bg-[#212121] p-1 text-sm text-white focus:ring-0"
+          className="w-64 border-none bg-[#212121] text-sm text-white focus:ring-0"
+          placeholder="Enter title..."
         />
       </div>
-      <div className="flex items-center gap-2">
-        <span className="mr-4 flex flex-row items-center text-sm text-gray-400">
-          <FaUser size="16" className="mr-1" />
-          {activeUsers}
-        </span>
-        <Button
-          variant="outline"
-          className="border-0 bg-[#2D2D2D] px-2 py-1 text-sm text-white"
-        >
-          Share
-          <FiShare2 size="16" className="ml-1" />
-        </Button>
-        {status === "authenticated" ? (
-          <Button
-            onClick={handleSignout}
-            variant="outline"
-            className="border-0 bg-[#2D2D2D] px-2 py-1 text-sm text-white"
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 text-sm text-gray-400">
+          <FaUser size="14" />
+          <span>{activeUsers}</span>
+        </div>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-0 bg-[#2D2D2D] text-white hover:bg-[#3a3a3a] hover:text-white"
+              onClick={() => setUrlToCopy(window.location.href)}
+            >
+              <FiShare2 size="14" className="mr-2" />
+              Share
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent
+            className="w-80 border border-gray-700 bg-[#212121] p-3"
+            align="end"
           >
-            Sign Out
-            <PiSignInLight size="19" className="ml-1" />
-          </Button>
-        ) : (
-          <Button
-            onClick={handleSignin}
-            variant="outline"
-            className="border-0 bg-[#2D2D2D] px-2 py-1 text-sm text-white"
-          >
-            Sign In
-            <PiSignInLight size="19" className="ml-1" />
-          </Button>
-        )}
+            <div className="flex items-center gap-2">
+              <Input
+                value={window.location.href}
+                readOnly
+                className="flex-1 border-none bg-[#2D2D2D] text-sm text-white focus:ring-0"
+              />
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-8 w-8 hover:bg-[#3a3a3a]"
+                onClick={handleCopy}
+              >
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.div
+                    key={isCopied ? "check" : "copy"}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    {isCopied ? (
+                      <FiCheck size="14" className="text-green-500" />
+                    ) : (
+                      <FiCopy size="14" className="text-white" />
+                    )}
+                  </motion.div>
+                </AnimatePresence>
+              </Button>
+            </div>
+          </PopoverContent>
+        </Popover>
+        {
+          // status === "loading" ? (
+          // <Avatar className="h-8 w-8">
+          //   <AvatarFallback>😎</AvatarFallback>
+          // </Avatar>
+          // ) :
+          status === "authenticated" ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Avatar className="h-8 w-8 cursor-pointer ring-offset-background transition-opacity hover:opacity-80">
+                  <AvatarImage src={image ?? ""} />
+                  {/* <AvatarFallback>😎</AvatarFallback> */}
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="w-40 border border-gray-700 bg-[#1f1e1e] text-white"
+              >
+                <DropdownMenuItem
+                  onClick={handleSignout}
+                  className="cursor-pointer hover:bg-[#2a2a2a]"
+                >
+                  Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button
+              onClick={handleSignin}
+              variant="outline"
+              size="sm"
+              className="border-0 bg-[#2D2D2D] text-white hover:bg-[#3a3a3a]"
+            >
+              <PiSignInLight size="16" className="mr-2" />
+              Sign In
+            </Button>
+          )
+        }
       </div>
-    </div>
+    </nav>
   );
 };
 

@@ -1,13 +1,12 @@
 import { applyWSSHandler } from "@trpc/server/adapters/ws";
-import { WebSocketServer, WebSocket } from "ws";
+import { WebSocketServer, type WebSocket } from "ws";
 import { appRouter } from "~/server/api/root";
 import { type CreateWSSContextFnOptions } from "@trpc/server/adapters/ws";
 import { createTRPCContext } from "./api/trpc";
 
-const activeConnections = new Set<string>();
 const rooms = new Map<string, Set<string>>();
 
-const createContext = async ({ req, res }: CreateWSSContextFnOptions) => {
+const createContext = async ({}: CreateWSSContextFnOptions) => {
   const headers = new Headers();
   return createTRPCContext({
     headers,
@@ -81,9 +80,6 @@ wss.on("connection", (ws) => {
         }
 
         const room = rooms.get(currentRoom);
-
-        // console.log(`+ Connection (${connectionId}) (${currentRoom})`);
-        // console.log(`+ Connection  Room(${room})`);
 
         if (room && !room.has(connectionId)) {
           room.add(connectionId);

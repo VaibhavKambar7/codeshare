@@ -17,6 +17,13 @@ import { FaListUl } from "react-icons/fa";
 import Image from "next/image";
 import { FaQuestionCircle } from "react-icons/fa";
 import { IoRocket } from "react-icons/io5";
+import { Avatar, AvatarFallback, AvatarImage } from "./_components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./_components/ui/dropdown-menu";
 
 export default function Component() {
   const scrollToSection = (id: string) => {
@@ -35,7 +42,7 @@ export default function Component() {
     router.push(`/f/${id}`);
   };
 
-  const { status } = useSession();
+  const { data, status } = useSession();
 
   const handleSignin = async () => {
     await signIn("google");
@@ -45,11 +52,13 @@ export default function Component() {
     await signOut();
   };
 
+  const image = data?.user?.image;
+
   return (
     <div className="polka-dot relative flex min-h-screen flex-col text-gray-100">
       <header className="mt-2 flex h-12 items-center px-3 lg:px-5">
         <div className="flex flex-row items-center">
-          <Link className="flex items-center " href="#">
+          <Link className="flex items-center" href="#">
             <Image
               src="/assets/coding.png"
               width={24}
@@ -88,25 +97,45 @@ export default function Component() {
             Contribute
           </Button>
           <div className="flex gap-2">
-            {status === "authenticated" ? (
-              <Button
-                onClick={handleSignout}
-                variant="outline"
-                className="border-0 bg-gray-950 px-2 py-1 text-base text-white"
-              >
-                Sign Out
-                <PiSignInLight size="18" className="ml-1" />
-              </Button>
-            ) : (
-              <Button
-                onClick={handleSignin}
-                variant="outline"
-                className="border-0 bg-gray-950 px-2 py-1 text-base text-white"
-              >
-                Sign In
-                <PiSignInLight size="18" className="ml-1" />
-              </Button>
-            )}
+            {
+              // status === "loading" ? (
+              // <Avatar className="h-8 w-8">
+              //   <AvatarFallback>😎</AvatarFallback>
+              // </Avatar>
+              // ) :
+              status === "authenticated" ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger>
+                    <Avatar className="h-8 w-8 cursor-pointer">
+                      <AvatarImage src={image ?? ""} />
+                      {/* <AvatarFallback>😎</AvatarFallback> */}
+                    </Avatar>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    className="border border-gray-700 bg-[#1f1e1e] text-white shadow-lg hover:bg-[#1f1e1e]"
+                    style={{
+                      transform: "translate(-1.5rem, 0.5rem)",
+                    }}
+                  >
+                    <DropdownMenuItem
+                      onClick={handleSignout}
+                      className="cursor-pointer hover:bg-[#1f1e1e]"
+                    >
+                      Sign Out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button
+                  onClick={handleSignin}
+                  variant="outline"
+                  className="border-0 bg-[#2D2D2D] px-2 py-1 text-sm text-white"
+                >
+                  Sign In
+                  <PiSignInLight size="18" className="ml-1" />
+                </Button>
+              )
+            }
           </div>
         </nav>
       </header>

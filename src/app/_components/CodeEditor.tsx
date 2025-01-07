@@ -25,21 +25,24 @@ interface CodeEditorProps {
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = ({ slug }) => {
-  const [value, setValue] = useState<string>("//write some good code");
-  const [debouncedValue] = useDebounce(value, DEBOUNCE_TIME);
+  const [value, setValue] = useState<string>("");
+  // const [debouncedValue] = useDebounce(value, DEBOUNCE_TIME);
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const lastUpdateRef = useRef<string>("");
   const updateContentMutation = api.editor.updateContent.useMutation();
   const { theme, title } = useTheme();
   const { data } = useSession();
+  const { data: fileCode } = api.userFile.getFileCode.useQuery(slug);
 
   useEffect(() => {
     const savedContent = localStorage.getItem(`editorContent_${slug}`);
     if (savedContent) {
       setValue(savedContent);
       lastUpdateRef.current = savedContent;
+    } else if (fileCode) {
+      setValue(fileCode);
     }
-  }, []);
+  }, [slug, fileCode]);
 
   useEffect(() => {
     loader
@@ -92,32 +95,28 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ slug }) => {
 
   const { mutate: saveUserFile } =
     api.userFile.createUserFileMutation.useMutation({
-      onError: () => console.log("error saving file"),
-      onSettled: () => console.log("file saved"),
+      onError: (error) => console.log("error saving file:", error),
+      onSettled: () => console.log("file save attempt completed"),
     });
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      if (typeof slug === "string" && data) {
-        const userData: UserData = {
-          name: data.user?.name ?? null,
-          email: data.user?.email ?? null,
-        };
+      const userData: UserData = {
+        name: data?.user?.name ?? null,
+        email: data?.user?.email ?? null,
+      };
 
-        const fileData: FileData = {
-          title,
-          content: debouncedValue,
-          link: slug,
-        };
+      const fileData: FileData = {
+        title,
+        content: value,
+        link: slug,
+      };
 
-        if (fileData.content && fileData.link) {
-          saveUserFile({ userData, fileData });
-        }
-      }
+      saveUserFile({ userData, fileData });
     }, SAVE_PERIODIC_NEW_FILE_DATA_TIME);
 
     return () => clearInterval(intervalId);
-  }, [data, debouncedValue, saveUserFile, slug, title]);
+  }, [data, saveUserFile, slug, title, value]);
 
   return (
     <Editor

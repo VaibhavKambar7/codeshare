@@ -132,4 +132,23 @@ export const userFileRouter = createTRPCRouter({
         });
       }
     }),
+
+  getFileCode: publicProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      const slug = input;
+
+      const file = await ctx.db.file.findUnique({
+        where: {
+          link: slug,
+        },
+      });
+      if (!file) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "File not found",
+        });
+      }
+      return file.content;
+    }),
 });
