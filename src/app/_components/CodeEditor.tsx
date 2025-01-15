@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useRef, useState } from "react";
 import Editor, {
   loader,
@@ -6,7 +8,7 @@ import Editor, {
 } from "@monaco-editor/react";
 import { Spinner } from "./ui/spinner";
 import type * as monaco from "monaco-editor";
-import themes from "../../lib/theme";
+import { themes } from "../../lib/theme";
 import { api } from "~/trpc/react";
 import { useDebounce } from "use-debounce";
 import { useTheme } from "../context/themeContext";
@@ -17,6 +19,8 @@ import {
 } from "~/lib/constants";
 import type { z } from "zod";
 import type { fileDataSchema, userDataSchema } from "~/lib/types";
+import { usePathname, useRouter } from "next/navigation";
+import { PiSpinnerBold } from "react-icons/pi";
 
 type ThemeKey = keyof typeof themes;
 
@@ -24,25 +28,40 @@ interface CodeEditorProps {
   slug: string;
 }
 
+export type UserData = z.infer<typeof userDataSchema>;
+export type FileData = z.infer<typeof fileDataSchema>;
+
 const CodeEditor: React.FC<CodeEditorProps> = ({ slug }) => {
   const [value, setValue] = useState<string>("");
   // const [debouncedValue] = useDebounce(value, DEBOUNCE_TIME);
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const lastUpdateRef = useRef<string>("");
   const updateContentMutation = api.editor.updateContent.useMutation();
-  const { theme, title } = useTheme();
-  const { data } = useSession();
-  const { data: fileCode } = api.userFile.getFileCode.useQuery(slug);
+  const { theme, title, setTitle } = useTheme();
+  const { status, data } = useSession();
+  const { data: fileData } = api.userFile.getFileData.useQuery(slug);
+
+  const pathname = usePathname();
 
   useEffect(() => {
-    const savedContent = localStorage.getItem(`editorContent_${slug}`);
-    if (savedContent) {
-      setValue(savedContent);
-      lastUpdateRef.current = savedContent;
-    } else if (fileCode) {
-      setValue(fileCode);
+    if (fileData?.title) {
+      setTitle(fileData?.title);
     }
-  }, [slug, fileCode]);
+  }, [fileData, setTitle]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedContent = localStorage.getItem(`editorContent_${slug}`);
+      if (savedContent) {
+        setValue(savedContent);
+        lastUpdateRef.current = savedContent;
+      } else if (fileData?.content) {
+        // Only use fileData.content if there's no localStorage content
+        setValue(fileData.content);
+        lastUpdateRef.current = fileData.content;
+      }
+    }
+  }, [slug, fileData?.content]);
 
   useEffect(() => {
     loader
@@ -80,7 +99,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ slug }) => {
     if (newValue && newValue !== lastUpdateRef.current) {
       lastUpdateRef.current = newValue;
       setValue(newValue);
-      localStorage.setItem(`editorContent_${slug}`, newValue);
+      if (typeof window !== "undefined") {
+        localStorage.setItem(`editorContent_${slug}`, newValue);
+      }
       updateContentMutation.mutate({ room: slug, content: newValue });
     }
   };
@@ -90,16 +111,50 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ slug }) => {
     editor.focus();
   };
 
-  type UserData = z.infer<typeof userDataSchema>;
-  type FileData = z.infer<typeof fileDataSchema>;
-
   const { mutate: saveUserFile } =
     api.userFile.createUserFileMutation.useMutation({
       onError: (error) => console.log("error saving file:", error),
       onSettled: () => console.log("file save attempt completed"),
     });
 
+  const initialSaveRef = useRef(false);
+  const prevAuthStateRef = useRef<string | null>(null);
+
   useEffect(() => {
+    console.log("title changed");
+
+    console.log("Auth state changed:", {
+      status,
+      email: data?.user?.email,
+      prevAuthState: prevAuthStateRef.current,
+    });
+
+    const authStateChanged =
+      prevAuthStateRef.current !== status && status === "authenticated";
+
+    prevAuthStateRef.current = status;
+
+    if (!initialSaveRef.current || authStateChanged) {
+      console.log("Triggering save due to:", {
+        isInitialSave: !initialSaveRef.current,
+        authStateChanged,
+      });
+
+      const userData: UserData = {
+        name: data?.user?.name ?? null,
+        email: data?.user?.email ?? null,
+      };
+
+      const fileData: FileData = {
+        title,
+        content: value,
+        link: slug,
+      };
+
+      saveUserFile({ userData, fileData });
+      initialSaveRef.current = true;
+    }
+
     const intervalId = setInterval(() => {
       const userData: UserData = {
         name: data?.user?.name ?? null,
@@ -116,7 +171,16 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ slug }) => {
     }, SAVE_PERIODIC_NEW_FILE_DATA_TIME);
 
     return () => clearInterval(intervalId);
-  }, [data, saveUserFile, slug, title, value]);
+  }, [
+    status,
+    data?.user?.email,
+    data?.user?.name,
+    pathname,
+    title,
+    value,
+    slug,
+    saveUserFile,
+  ]);
 
   return (
     <Editor
@@ -129,7 +193,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ slug }) => {
       options={{ selectOnLineNumbers: true }}
       loading={
         <div className="absolute inset-0 flex items-center justify-center bg-[#2b2a2a]">
-          <Spinner size={40} color="white" />
+          <PiSpinnerBold className="animate-spin text-4xl text-[#d1d1db]" />
         </div>
       }
     />

@@ -145,7 +145,8 @@ export default function Component() {
             <div className="flex flex-col items-center space-y-6 text-center">
               <div className="space-y-3">
                 <div className="text-[15px] font-bold tracking-tight text-white sm:text-4xl md:text-5xl lg:text-6xl">
-                  Collaborate on code with developers{" "}
+                  Collaborate on code with developers
+                  <span className="text-blue-500">.</span>{" "}
                 </div>
                 <p className="custom-font mx-auto max-w-[600px] text-base text-gray-400 md:text-lg lg:text-xl">
                   Share, edit, and create together as you connect with fellow
@@ -161,10 +162,10 @@ export default function Component() {
                   New File
                 </Button>
               </div>
-              <div className="custom-font text-gray-400">
+              {/* <div className="custom-font text-gray-400">
                 No sign up. Free. Forever ❤️
-              </div>
-              <div className="mt-4 pr-80">
+              </div> */}
+              <div className=" pr-80">
                 <Image
                   src="/assets/getstarted.png"
                   width={225}

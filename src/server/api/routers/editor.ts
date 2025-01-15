@@ -133,7 +133,7 @@ export const userFileRouter = createTRPCRouter({
       }
     }),
 
-  getFileCode: publicProcedure
+  getFileData: publicProcedure
     .input(z.string())
     .query(async ({ ctx, input }) => {
       const slug = input;
@@ -149,6 +149,42 @@ export const userFileRouter = createTRPCRouter({
           message: "File not found",
         });
       }
-      return file.content;
+
+      return { content: file.content, title: file.title };
+    }),
+
+  getAllFiles: publicProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      const userEmail = input;
+
+      const user = await ctx.db.user.findUnique({
+        where: { email: userEmail },
+        include: {
+          files: {
+            orderBy: {
+              updatedAt: "desc",
+            },
+            select: {
+              title: true,
+              link: true,
+            },
+          },
+        },
+      });
+
+      if (!user) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User not found",
+        });
+      }
+
+      const files = user.files.map((file) => ({
+        title: file.title,
+        link: file.link,
+      }));
+
+      return files;
     }),
 });

@@ -110,4 +110,26 @@ const themes = {
   monoindustrial,
 };
 
-export default themes;
+const languages = [
+  "javascript",
+  "python",
+  "java",
+  "csharp",
+  "go",
+  "rust",
+  "ruby",
+  "php",
+  "html",
+  "css",
+  "scss",
+  "json",
+  "yaml",
+  "xml",
+  "markdown",
+  "sql",
+  "shell",
+  "dockerfile",
+  "plaintext",
+];
+
+export { themes, languages };

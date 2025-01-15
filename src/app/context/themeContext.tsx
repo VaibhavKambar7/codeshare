@@ -6,6 +6,8 @@ import React, {
 } from "react";
 
 interface ThemeContextType {
+  language: string;
+  setLanguage: (theme: string) => void;
   theme: string;
   setTheme: (theme: string) => void;
   title: string;
@@ -18,10 +20,13 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [theme, setTheme] = useState<string>("GitHubDark");
+  const [language, setLanguage] = useState<string>("javascript");
   const [title, setTitle] = useState<string>("Untitled");
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, title, setTitle }}>
+    <ThemeContext.Provider
+      value={{ theme, setTheme, title, setTitle, language, setLanguage }}
+    >
       {children}
     </ThemeContext.Provider>
   );
