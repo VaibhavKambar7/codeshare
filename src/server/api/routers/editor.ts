@@ -150,7 +150,11 @@ export const userFileRouter = createTRPCRouter({
         });
       }
 
-      return { content: file.content, title: file.title };
+      return {
+        content: file.content,
+        title: file.title,
+        isFavourite: file.isFavourite,
+      };
     }),
 
   getAllFiles: publicProcedure
@@ -186,5 +190,27 @@ export const userFileRouter = createTRPCRouter({
       }));
 
       return files;
+    }),
+
+  toggleFavourite: publicProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      const file = await ctx.db.file.findUnique({
+        where: { link: input },
+      });
+
+      if (!file) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "File not found",
+        });
+      }
+
+      return await ctx.db.file.update({
+        where: { link: input },
+        data: {
+          isFavourite: !file.isFavourite,
+        },
+      });
     }),
 });

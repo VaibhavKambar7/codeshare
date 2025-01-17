@@ -21,12 +21,13 @@ model User {
 }
 
 model File {
-  id        String   @id @default(cuid())
-  title     String?
-  content   String?
-  link      String   @unique
-  ownerId   String?
-  owner     User?    @relation("UserFiles", fields: [ownerId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  title       String?
+  content     String?
+  link        String   @unique
+  isFavourite Boolean  @default(false)
+  ownerId     String?
+  owner       User?    @relation("UserFiles", fields: [ownerId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

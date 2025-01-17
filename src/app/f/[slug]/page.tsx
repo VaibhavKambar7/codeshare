@@ -25,7 +25,7 @@ const EditorPage = () => {
     <>
       {!isFullscreen && <Navbar />}
       <CodeEditor slug={slug} />
-      {!isFullscreen && <FloatingActionBar />}
+      {!isFullscreen && <FloatingActionBar slug={slug} />}
     </>
   );
 };

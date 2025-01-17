@@ -3,6 +3,7 @@ import { GeistSans } from "geist/font/sans";
 import { Inter as FontSans } from "next/font/google";
 import { cn } from "~/lib/utils";
 import { Providers } from "./providers/Providers";
+import { Toaster } from "sonner";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -29,6 +30,7 @@ export default function RootLayout({
         )}
       >
         <Providers>{children}</Providers>
+        <Toaster />
       </body>
     </html>
   );

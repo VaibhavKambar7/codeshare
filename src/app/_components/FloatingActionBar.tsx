@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiMaximize, FiCopy, FiSettings, FiHeart } from "react-icons/fi";
+import { FiMaximize, FiCopy, FiHeart } from "react-icons/fi";
 import { VscSettings } from "react-icons/vsc";
 import {
   Tooltip,
@@ -12,32 +12,64 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import Sidebar from "./Sidebar";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+import { toast } from "sonner";
+import { api } from "~/trpc/react";
 
-const FloatingActionBar = () => {
+const FloatingActionBar = ({ slug }: { slug: string }) => {
   const [isCopied, setIsCopied] = useState(false);
+  const [isFavourite, setIsFavourite] = useState(false);
+
+  const { data: fileData } = api.userFile.getFileData.useQuery(slug);
+
+  useEffect(() => {
+    setIsFavourite(fileData?.isFavourite ?? false);
+  }, [fileData, slug]);
+
+  const toggleFavourite = api.userFile.toggleFavourite.useMutation({
+    onMutate: async () => {
+      setIsFavourite((prev) => !prev);
+    },
+    onSuccess: (data) => {
+      setIsFavourite(data.isFavourite);
+      toast.success(
+        data.isFavourite ? "Added to favorites" : "Removed from favorites",
+      );
+    },
+    onError: (error) => {
+      setIsFavourite((prev) => !prev);
+      toast.error(error.message || "Failed to update favorite status");
+    },
+  });
 
   const toggleFullscreen = async () => {
-    const elem = document.documentElement;
-    if (!document.fullscreenElement) {
-      elem.requestFullscreen().catch((err) => {
-        console.error(`Error attempting to enable full-screen mode: ${err}`);
-      });
-    } else {
-      if (document.exitFullscreen) {
-        await document.exitFullscreen();
+    try {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
+      } else {
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+        }
       }
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to toggle fullscreen");
     }
   };
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(
-      localStorage.getItem("editorContent") ?? "//write some good code",
-    );
-    setIsCopied(true);
+    try {
+      const content =
+        localStorage.getItem("editorContent") ?? "//write some good code";
+      await navigator.clipboard.writeText(content);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 3000);
+    } catch (err) {
+      toast.error("Failed to copy content");
+    }
+  };
 
-    setTimeout(() => {
-      setIsCopied(false);
-    }, 3000);
+  const handleFavourite = () => {
+    toggleFavourite.mutate(slug);
   };
 
   return (
@@ -108,12 +140,22 @@ const FloatingActionBar = () => {
 
         <Tooltip>
           <TooltipTrigger>
-            <button className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#212121] text-white hover:bg-[#2d2d2d]">
-              <FiHeart size="14" />
+            <button
+              onClick={handleFavourite}
+              className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#212121] text-white hover:bg-[#2d2d2d]"
+              aria-label={
+                isFavourite ? "Added to favorites" : "Removed from favorites"
+              }
+            >
+              <FiHeart
+                size={14}
+                fill={isFavourite ? "red" : "none"}
+                className={isFavourite ? "text-red-900" : "text-white"}
+              />
             </button>
           </TooltipTrigger>
           <TooltipContent className="mb-3 border-0 bg-black text-white">
-            <p>Favorites</p>
+            <p>{!isFavourite ? "Add to favorites" : "Remove from favorites"}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
