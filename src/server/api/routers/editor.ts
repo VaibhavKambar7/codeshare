@@ -178,6 +178,7 @@ export const userFileRouter = createTRPCRouter({
             select: {
               title: true,
               link: true,
+              isFavourite: true,
             },
           },
         },
@@ -193,6 +194,7 @@ export const userFileRouter = createTRPCRouter({
       const files = user.files.map((file) => ({
         title: file.title,
         link: file.link,
+        isFavourite: file.isFavourite,
       }));
 
       return files;
