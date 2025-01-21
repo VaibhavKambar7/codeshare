@@ -23,7 +23,7 @@ const EditorPage = () => {
 
   return (
     <>
-      {!isFullscreen && <Navbar />}
+      {!isFullscreen && <Navbar slug={slug} />}
       <CodeEditor slug={slug} />
       {!isFullscreen && <FloatingActionBar slug={slug} />}
     </>

@@ -26,6 +26,7 @@ model File {
   content     String?
   link        String   @unique
   isFavourite Boolean  @default(false)
+  isViewOnly  Boolean  @default(false)
   ownerId     String?
   owner       User?    @relation("UserFiles", fields: [ownerId], references: [id])
   createdAt   DateTime @default(now())

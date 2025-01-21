@@ -6,17 +6,12 @@ import Editor, {
   type OnChange,
   type OnMount,
 } from "@monaco-editor/react";
-import { Spinner } from "./ui/spinner";
 import type * as monaco from "monaco-editor";
 import { themes } from "../../lib/theme";
 import { api } from "~/trpc/react";
-import { useDebounce } from "use-debounce";
 import { useTheme } from "../context/themeContext";
 import { useSession } from "next-auth/react";
-import {
-  DEBOUNCE_TIME,
-  SAVE_PERIODIC_NEW_FILE_DATA_TIME,
-} from "~/lib/constants";
+import { SAVE_PERIODIC_NEW_FILE_DATA_TIME } from "~/lib/constants";
 import type { z } from "zod";
 import type { fileDataSchema, userDataSchema } from "~/lib/types";
 import { usePathname, useRouter } from "next/navigation";
@@ -40,6 +35,11 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ slug }) => {
   const { theme, title, setTitle } = useTheme();
   const { status, data } = useSession();
   const { data: fileData } = api.userFile.getFileData.useQuery(slug);
+
+  const isEditable =
+    fileData?.userEmail === data?.user?.email && fileData?.isViewOnly;
+
+  const isViewOnlyForNonOwner = !isEditable && fileData?.isViewOnly;
 
   const pathname = usePathname();
 
@@ -190,7 +190,10 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ slug }) => {
       value={value}
       onMount={onMount}
       onChange={handleEditorChange}
-      options={{ selectOnLineNumbers: true }}
+      options={{
+        selectOnLineNumbers: true,
+        readOnly: isViewOnlyForNonOwner,
+      }}
       loading={
         <div className="absolute inset-0 flex items-center justify-center bg-[#2b2a2a]">
           <PiSpinnerBold className="animate-spin text-4xl text-[#d1d1db]" />

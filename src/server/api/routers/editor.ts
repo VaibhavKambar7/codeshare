@@ -1,7 +1,7 @@
 import { EventEmitter } from "events";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { fileDataSchema, userDataSchema } from "~/lib/types";
 import { TRPCError } from "@trpc/server";
 
@@ -142,7 +142,11 @@ export const userFileRouter = createTRPCRouter({
         where: {
           link: slug,
         },
+        include: {
+          owner: true,
+        },
       });
+
       if (!file) {
         throw new TRPCError({
           code: "NOT_FOUND",
@@ -154,6 +158,8 @@ export const userFileRouter = createTRPCRouter({
         content: file.content,
         title: file.title,
         isFavourite: file.isFavourite,
+        userEmail: file?.owner?.email,
+        isViewOnly: file?.isViewOnly,
       };
     }),
 
@@ -211,6 +217,46 @@ export const userFileRouter = createTRPCRouter({
         data: {
           isFavourite: !file.isFavourite,
         },
+      });
+    }),
+
+  toggleViewOnly: publicProcedure
+    .input(
+      z.object({
+        link: z.string(),
+        isViewOnly: z.boolean(),
+        userEmail: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const file = await ctx.db.file.findUnique({
+        where: {
+          link: input.link,
+        },
+        include: {
+          owner: true,
+        },
+      });
+
+      if (!file) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "File not found",
+        });
+      }
+
+      if (file.owner?.email !== input.userEmail) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Only the owner can modify view-only status",
+        });
+      }
+
+      return await ctx.db.file.update({
+        where: {
+          link: input.link,
+        },
+        data: { isViewOnly: input.isViewOnly },
       });
     }),
 });
