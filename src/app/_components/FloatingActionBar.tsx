@@ -14,11 +14,13 @@ import Sidebar from "./Sidebar";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { toast } from "sonner";
 import { api } from "~/trpc/react";
+import { useSession } from "next-auth/react";
 
 const FloatingActionBar = ({ slug }: { slug: string }) => {
   const [isCopied, setIsCopied] = useState(false);
   const [isFavourite, setIsFavourite] = useState(false);
 
+  const { data: session } = useSession();
   const { data: fileData } = api.userFile.getFileData.useQuery(slug);
 
   useEffect(() => {
@@ -69,6 +71,10 @@ const FloatingActionBar = ({ slug }: { slug: string }) => {
   };
 
   const handleFavourite = () => {
+    if (!session) {
+      toast.info("Please login to add to favorites");
+      return;
+    }
     toggleFavourite.mutate(slug);
   };
 

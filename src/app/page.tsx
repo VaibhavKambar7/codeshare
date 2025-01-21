@@ -263,7 +263,7 @@ export default function Component() {
       </main>
       <footer className="flex w-full shrink-0 flex-col items-center gap-3 border-t border-gray-800 px-3 py-6 sm:flex-row md:px-4">
         <p className="text-xs text-gray-500">
-          © 2024 CodeShare. All rights reserved.
+          © 2025 CodeShare. All rights reserved.
         </p>
         <nav className="flex gap-3 sm:ml-auto sm:gap-4">
           <Link
