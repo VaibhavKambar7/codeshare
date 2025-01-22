@@ -33,12 +33,19 @@ const Navbar = ({ slug }: { slug: string }) => {
   const [urlToCopy, setUrlToCopy] = useState("");
   const [isViewOnly, setIsViewOnly] = useState(false);
   const [isViewOnlyLoading, setIsViewOnlyLoading] = useState(false);
+  const [currentUrl, setCurrentUrl] = useState("");
 
   const { data: fileData } = api.userFile.getFileData.useQuery(slug);
 
   useEffect(() => {
     setIsViewOnly(fileData?.isViewOnly ?? false);
   }, [fileData, slug]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setCurrentUrl(window.location.href);
+    }
+  }, []);
 
   const image = data?.user?.image;
 
@@ -95,7 +102,7 @@ const Navbar = ({ slug }: { slug: string }) => {
   };
 
   return (
-    <nav className="flex h-16 items-center justify-between bg-[#1f1e1e] px-4 shadow-md">
+    <div className="flex h-16 items-center justify-between bg-[#1f1e1e] px-4 shadow-md">
       <div className="flex items-center gap-6">
         <Link href="/" className="transition-opacity hover:opacity-80">
           <Image
@@ -125,7 +132,7 @@ const Navbar = ({ slug }: { slug: string }) => {
               variant="outline"
               size="sm"
               className="border-0 bg-[#2D2D2D] text-white hover:bg-[#3a3a3a] hover:text-white"
-              onClick={() => setUrlToCopy(window.location.href)}
+              onClick={() => setUrlToCopy(currentUrl)}
             >
               <FiShare2 size="14" className="mr-2" />
               Share
@@ -138,9 +145,7 @@ const Navbar = ({ slug }: { slug: string }) => {
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <Input
-                  value={
-                    window?.location.href + (isViewOnly ? "?mode=view" : "")
-                  }
+                  value={currentUrl + (isViewOnly ? "?mode=view" : "")}
                   readOnly
                   className="flex-1 border-none bg-[#2D2D2D] text-sm text-white focus:ring-0"
                 />
@@ -245,7 +250,7 @@ const Navbar = ({ slug }: { slug: string }) => {
           )
         }
       </div>
-    </nav>
+    </div>
   );
 };
 

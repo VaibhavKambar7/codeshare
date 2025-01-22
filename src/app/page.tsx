@@ -61,8 +61,8 @@ export default function Component() {
           <Link className="flex items-center" href="#">
             <Image
               src="/assets/coding.png"
-              width={24}
-              height={24}
+              width="36"
+              height="36"
               alt="image"
             />
             <span className="ml-2 text-lg font-bold ">CodeShare</span>

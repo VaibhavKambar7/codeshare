@@ -63,6 +63,10 @@ const FloatingActionBar = ({ slug }: { slug: string }) => {
   }, [fileData, slug]);
 
   const handleSearch = () => {
+    if (!session) {
+      toast.info("Please login to search files");
+      return;
+    }
     setIsDialogOpen(true);
   };
 
@@ -153,25 +157,8 @@ const FloatingActionBar = ({ slug }: { slug: string }) => {
               <>
                 {selectedTab === "recents" ? (
                   <ul className="max-h-[60vh] space-y-2 overflow-y-auto">
-                    {files.map((file) => (
-                      <li
-                        key={file.link}
-                        className={`mb-2 cursor-pointer rounded-md p-2 text-[#d1d1db] ${
-                          slug === file.link
-                            ? "bg-[#3a3a3a]"
-                            : "hover:bg-[#262525]"
-                        }`}
-                        onClick={() => handleLink(file.link)}
-                      >
-                        {file.title}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <ul className="max-h-[60vh] space-y-2 overflow-y-auto">
-                    {files
-                      .filter((file) => file.isFavourite)
-                      .map((file) => (
+                    {files.length > 0 ? (
+                      files.map((file) => (
                         <li
                           key={file.link}
                           className={`mb-2 cursor-pointer rounded-md p-2 text-[#d1d1db] ${
@@ -183,7 +170,36 @@ const FloatingActionBar = ({ slug }: { slug: string }) => {
                         >
                           {file.title}
                         </li>
-                      ))}
+                      ))
+                    ) : (
+                      <div className="text-center text-[#d1d1db]">
+                        No files found
+                      </div>
+                    )}
+                  </ul>
+                ) : (
+                  <ul className="max-h-[60vh] space-y-2 overflow-y-auto">
+                    {files.filter((file) => file.isFavourite).length > 0 ? (
+                      files
+                        .filter((file) => file.isFavourite)
+                        .map((file) => (
+                          <li
+                            key={file.link}
+                            className={`mb-2 cursor-pointer rounded-md p-2 text-[#d1d1db] ${
+                              slug === file.link
+                                ? "bg-[#3a3a3a]"
+                                : "hover:bg-[#262525]"
+                            }`}
+                            onClick={() => handleLink(file.link)}
+                          >
+                            {file.title}
+                          </li>
+                        ))
+                    ) : (
+                      <div className="text-center text-[#d1d1db]">
+                        No files found
+                      </div>
+                    )}
                   </ul>
                 )}
               </>
@@ -271,7 +287,7 @@ const FloatingActionBar = ({ slug }: { slug: string }) => {
               </TooltipContent>
             </Tooltip>
           </SheetTrigger>
-          <SheetContent>
+          <SheetContent className="bg-[#1e1e1e] text-white">
             <Sidebar />
           </SheetContent>
         </Sheet>
