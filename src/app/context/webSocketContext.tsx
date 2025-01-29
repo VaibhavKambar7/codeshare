@@ -1,5 +1,6 @@
 "use client";
 
+import { nanoid } from "nanoid";
 import React, {
   createContext,
   useContext,
@@ -7,6 +8,7 @@ import React, {
   useState,
   useRef,
 } from "react";
+import { getWsUrl } from "~/trpc/react";
 
 interface WebSocketContextType {
   activeUsers: number;
@@ -42,14 +44,14 @@ export const WebSocketProvider = ({
     const connectWebSocket = () => {
       if (wsRef.current?.readyState === WebSocket.OPEN) return;
 
-      const ws = new WebSocket("ws://localhost:9898");
+      const ws = new WebSocket(getWsUrl());
       wsRef.current = ws;
 
       ws.onopen = () => {
         ws.send(
           JSON.stringify({
             type: "INIT",
-            id: crypto.randomUUID(),
+            id: nanoid(10),
             room: roomId,
           }),
         );

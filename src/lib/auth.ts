@@ -5,6 +5,7 @@ import GoogleProvider from "next-auth/providers/google";
 const prisma = new PrismaClient();
 
 export const authOptions: NextAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
   },

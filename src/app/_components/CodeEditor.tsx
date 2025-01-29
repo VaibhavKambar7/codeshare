@@ -14,7 +14,7 @@ import { useSession } from "next-auth/react";
 import { SAVE_PERIODIC_NEW_FILE_DATA_TIME } from "~/lib/constants";
 import type { z } from "zod";
 import type { fileDataSchema, userDataSchema } from "~/lib/types";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { PiSpinnerBold } from "react-icons/pi";
 
 type ThemeKey = keyof typeof themes;
@@ -81,6 +81,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ slug }) => {
       .catch(console.error);
   }, [theme]);
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const subscription = api.editor.onContentUpdate.useSubscription(slug, {
     onData: (newContent: string) => {
       if (newContent !== lastUpdateRef.current) {
@@ -95,6 +96,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ slug }) => {
     },
   });
 
+  console.log(subscription);
+  
   const handleEditorChange: OnChange = (newValue) => {
     if (newValue && newValue !== lastUpdateRef.current) {
       lastUpdateRef.current = newValue;

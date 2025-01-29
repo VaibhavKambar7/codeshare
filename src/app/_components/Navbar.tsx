@@ -11,7 +11,7 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import { useTheme } from "../context/themeContext";
 import { useWebSocket } from "../context/webSocketContext";
 import { FaUser } from "react-icons/fa6";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Avatar, AvatarImage } from "./ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -100,6 +100,8 @@ const Navbar = ({ slug }: { slug: string }) => {
       console.error("Failed to copy URL:", err);
     }
   };
+
+  console.log(urlToCopy);
 
   return (
     <div className="flex h-16 items-center justify-between bg-[#1f1e1e] px-4 shadow-md">

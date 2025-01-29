@@ -1,7 +1,7 @@
 import { EventEmitter } from "events";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure } from "../trpc";
 import { fileDataSchema, userDataSchema } from "~/lib/types";
 import { TRPCError } from "@trpc/server";
 
