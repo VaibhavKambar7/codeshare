@@ -56,7 +56,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ slug }) => {
         setValue(savedContent);
         lastUpdateRef.current = savedContent;
       } else if (fileData?.content) {
-        // Only use fileData.content if there's no localStorage content
         setValue(fileData.content);
         lastUpdateRef.current = fileData.content;
       }
@@ -97,7 +96,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ slug }) => {
   });
 
   console.log(subscription);
-  
+
   const handleEditorChange: OnChange = (newValue) => {
     if (newValue && newValue !== lastUpdateRef.current) {
       lastUpdateRef.current = newValue;

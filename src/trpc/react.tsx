@@ -29,47 +29,9 @@ export type RouterOutputs = inferRouterOutputs<AppRouter>;
 
 function getBaseUrl() {
   if (typeof window !== "undefined") return window.location.origin;
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`; // Add backticks
-  return `http://localhost:${process.env.PORT ?? 3000}`; // Add backticks
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  return `http://localhost:${process.env.PORT ?? 3000}`;
 }
-
-//1
-// function getWsUrl() {
-//   if (process.env.NEXT_PUBLIC_WS_URL) return process.env.NEXT_PUBLIC_WS_URL;
-//   if (process.env.VERCEL_URL) return `wss://${process.env.VERCEL_URL}`; // Add backticks
-//   return `ws://localhost:${process.env.PORT ?? 3001}`; // Add backticks
-// }
-
-//2
-// function getWsUrl() {
-//   if (typeof window !== "undefined") {
-//     // Use the browser's current host for WebSocket in production
-//     if (process.env.NODE_ENV === "production") {
-//       return `ws://${window.location.host}`;
-//     }
-//     // Default to localhost in development
-//     return "ws://localhost:3001";
-//   }
-//   // Server-side fallback
-//   if (process.env.NEXT_PUBLIC_WS_URL) return process.env.NEXT_PUBLIC_WS_URL;
-//   return "ws://localhost:3001";
-// }
-
-//3
-// function getWsUrl() {
-//   if (typeof window !== "undefined") {
-//     // Use the browser's current host for WebSocket in production
-//     // const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-//     if (process.env.NODE_ENV === "production") {
-//       // Use the same host as the web application
-//       return `ws://${window.location.host}`;
-//     }
-//     return "ws://localhost:3001";
-//   }
-//   return process.env.NEXT_PUBLIC_WS_URL ?? "ws://localhost:3001";
-// }
-
-//4
 
 export function getWsUrl() {
   if (typeof window !== "undefined") {
