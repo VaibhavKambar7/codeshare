@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Code, FilePlus, Users } from "lucide-react";
+import { FilePlus } from "lucide-react";
 import {
   AccordionContent,
   Accordion,
@@ -16,7 +16,6 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import { FaListUl } from "react-icons/fa";
 import Image from "next/image";
 import { FaQuestionCircle } from "react-icons/fa";
-import { IoRocket } from "react-icons/io5";
 import { Avatar, AvatarFallback, AvatarImage } from "./_components/ui/avatar";
 import {
   DropdownMenu,
@@ -24,14 +23,30 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./_components/ui/dropdown-menu";
+import { motion } from "framer-motion";
+
+const fadeInUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 },
+};
+
+const stagger = {
+  visible: {
+    transition: {
+      staggerChildren: 0.2,
+    },
+  },
+};
 
 export default function Component() {
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({
-        behavior: "smooth",
-      });
+      setTimeout(() => {
+        element.scrollIntoView({
+          behavior: "smooth",
+        });
+      }, 100);
     }
   };
 
@@ -119,9 +134,13 @@ export default function Component() {
         </div>
       </header>
       <main className="flex-1">
-        <section className="hero-gradient relative w-full py-12 md:py-16 lg:py-20 xl:py-24">
+        <section
+          className="hero-gradient md:py-22 lg:py-30 py-18 relative w-full 
+        xl:py-40"
+        >
+          {/* <section className="hero-gradient relative w-full py-24 md:py-32 lg:py-40 xl:py-48"> */}
           <div className="container mx-auto px-4">
-            <div className="flex flex-col items-center space-y-6 text-center lg:space-y-8">
+            <div className="flex flex-col items-center space-y-4 text-center lg:space-y-12">
               <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
                 <span className="gradient-text">Collaborate on code</span>
                 <br />
@@ -141,49 +160,143 @@ export default function Component() {
             </div>
           </div>
         </section>
-        <section id="features" className="w-full bg-[#1a1a1a] py-16 md:py-20">
-          <div className="container mx-auto px-4">
-            <h2 className=" mb-12 text-center text-2xl font-bold text-slate-400 md:mb-16 md:text-3xl lg:text-4xl">
-              Powerful Features for Seamless Collaboration
+        <section id="features" className="bg-[#111111] px-6 py-32 md:px-12">
+          <div className="container mx-auto max-w-6xl">
+            <h2 className="mb-24 text-center text-3xl font-bold text-white md:text-4xl">
+              Powerful Features
             </h2>
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
-              <div className=" rounded-lg border border-white bg-[#191919] p-6">
-                <Code className="mb-4 h-10 w-10 text-white md:h-12 md:w-12" />
-                <h3 className="mb-2 text-lg font-semibold text-white md:text-xl">
+
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={stagger}
+              className="mb-24 grid grid-cols-1 items-center gap-12 md:grid-cols-2"
+            >
+              <motion.div variants={fadeInUp} className="space-y-6">
+                <h3 className="text-2xl font-bold text-white">
                   Real-time Collaboration
                 </h3>
-                <p className="text-gray-300">
-                  Work together with your team in real-time. See changes
-                  instantly and collaborate seamlessly.
+                <p className="text-lg text-gray-300">
+                  Work seamlessly with your team in real-time. View active users
+                  in the editor, with upcoming features such as cursor tracking
+                  and selection sharing for an enhanced collaborative
+                  experience.
                 </p>
-              </div>
-              <div className=" rounded-lg border border-white bg-[#191919] p-6">
-                <Users className="mb-4 h-10 w-10 text-white md:h-12 md:w-12" />
-                <h3 className="mb-2 text-lg font-semibold text-white md:text-xl">
-                  Multi-user Editing
+              </motion.div>
+              <motion.div
+                variants={fadeInUp}
+                className="feature-image relative h-[320px] overflow-hidden rounded-xl"
+              >
+                <Image
+                  src="/assets/collab.png"
+                  fill
+                  style={{ objectFit: "cover" }}
+                  alt="Real-time Collaboration"
+                />
+              </motion.div>
+            </motion.div>
+
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={stagger}
+              className="mb-32 grid grid-cols-1 items-center gap-12 md:grid-cols-2"
+            >
+              <motion.div
+                variants={fadeInUp}
+                className="feature-image relative order-2 h-[320px] overflow-hidden rounded-xl md:order-1"
+              >
+                <Image
+                  src="/assets/fab.png"
+                  fill
+                  style={{ objectFit: "cover" }}
+                  alt="Floating Action Bar"
+                />
+              </motion.div>
+              <motion.div
+                variants={fadeInUp}
+                className="order-1 space-y-6 md:order-2"
+              >
+                <h3 className="text-2xl font-bold text-white">
+                  Floating Action Bar
                 </h3>
-                <p className="text-gray-300">
-                  Multiple users can edit the same file simultaneously without
-                  conflicts.
+                <p className="text-lg text-gray-300">
+                  Enhance your coding experience with a floating action bar that
+                  provides quick access to essential tools like fullscreen mode,
+                  copy functionality, file favoriting, and more.
                 </p>
-              </div>
-              <div className=" rounded-lg border border-white bg-[#191919] p-6">
-                <IoRocket className="mb-4 h-10 w-10 text-white md:h-12 md:w-12" />
-                <h3 className="mb-2 text-lg font-semibold text-white md:text-xl">
-                  Easy File Sharing
+              </motion.div>
+            </motion.div>
+
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={stagger}
+              className="mb-32 grid grid-cols-1 items-center gap-12 md:grid-cols-2"
+            >
+              <motion.div variants={fadeInUp} className="space-y-6">
+                <h3 className="text-2xl font-bold text-white">Quick Search</h3>
+                <p className="text-lg text-gray-300">
+                  Find files instantly with an intelligent search feature that
+                  allows you to filter through your codebase efficiently,
+                  including a dedicated section for your favorite files.
+                </p>
+              </motion.div>
+              <motion.div
+                variants={fadeInUp}
+                className="feature-image relative h-[320px] overflow-hidden rounded-xl"
+              >
+                <Image
+                  src="/assets/search2.png"
+                  fill
+                  style={{ objectFit: "cover" }}
+                  alt="Quick Search"
+                />
+              </motion.div>
+            </motion.div>
+
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={stagger}
+              className="grid grid-cols-1 items-center gap-12 md:grid-cols-2"
+            >
+              <motion.div
+                variants={fadeInUp}
+                className="feature-image relative order-2 h-[320px] overflow-hidden rounded-xl md:order-1"
+              >
+                <Image
+                  src="/assets/share4.png"
+                  fill
+                  style={{ objectFit: "cover" }}
+                  alt="Instant Sharing"
+                />
+              </motion.div>
+              <motion.div
+                variants={fadeInUp}
+                className="order-1 space-y-6 md:order-2"
+              >
+                <h3 className="text-2xl font-bold text-white">
+                  Instant Sharing
                 </h3>
-                <p className="text-gray-300">
-                  Share files with a single link. No complicated setups
-                  required.
+                <p className="text-lg text-gray-300">
+                  Share your code effortlessly with a single click. Use the
+                  <p>View-only mode: &quot;read-only&quot;</p>
+                  option to allow others to see your work without making
+                  changes, ensuring full control over your code.
                 </p>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </div>
         </section>
 
-        <section id="faq" className="w-full bg-[#111111] py-16 md:py-20">
+        <section id="faq" className="w-full bg-[#111111] py-32 md:py-40">
           <div className="container mx-auto px-4">
-            <h2 className="text-slate-4 mb-12 text-center text-2xl font-bold md:mb-16 md:text-3xl lg:text-4xl">
+            <h2 className="text-slate-4 mb-16 text-center text-2xl font-bold md:mb-20 md:text-3xl lg:text-4xl">
               Frequently Asked Questions
             </h2>
             <Accordion
@@ -191,8 +304,8 @@ export default function Component() {
               collapsible
               className="mx-auto w-full max-w-2xl"
             >
-              <AccordionItem value="item-1" className="mb-4">
-                <AccordionTrigger className="text-base font-semibold text-white hover:text-indigo-400 md:text-lg">
+              {/* <AccordionItem value="item-1" className="mb-4">
+                <AccordionTrigger className="text-base font-semibold text-white md:text-lg">
                   How does CodeShare work?
                 </AccordionTrigger>
                 <AccordionContent className="text-gray-300">
@@ -203,7 +316,7 @@ export default function Component() {
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="item-2" className="mb-4">
-                <AccordionTrigger className="text-base font-semibold text-white hover:text-indigo-400 md:text-lg">
+                <AccordionTrigger className="text-base font-semibold text-white  md:text-lg">
                   Is CodeShare free to use?
                 </AccordionTrigger>
                 <AccordionContent className="text-gray-300">
@@ -212,8 +325,8 @@ export default function Component() {
                   unlimited collaborators, extended file history, and priority
                   support.
                 </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="item-3" className="mb-4">
+              </AccordionItem> */}
+              {/* <AccordionItem value="item-3" className="mb-4">
                 <AccordionTrigger className="text-base font-semibold text-white hover:text-indigo-400 md:text-lg">
                   What programming languages does CodeShare support?
                 </AccordionTrigger>
@@ -222,6 +335,62 @@ export default function Component() {
                   including but not limited to JavaScript, Python, Java, C++,
                   Ruby, and many more. Our syntax highlighting and
                   language-specific features enhance the coding experience.
+                </AccordionContent>
+              </AccordionItem> */}
+              <AccordionItem value="item-4" className="mb-4">
+                <AccordionTrigger className="text-base font-semibold text-white  md:text-lg">
+                  What can I use Codeshare for?
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-300">
+                  You can use Codeshare for everything code sharing, like pair
+                  programming, sharing code online with your team, tech
+                  interviews, teaching... you name it.
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="item-5" className="mb-4">
+                <AccordionTrigger className="text-base font-semibold text-white  md:text-lg">
+                  How long does a file last?
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-300">
+                  Forever (unless the creator of the file deletes it).
+                </AccordionContent>
+              </AccordionItem>
+              {/* <AccordionItem value="item-6" className="mb-4">
+                <AccordionTrigger className="text-base font-semibold text-white hover:text-indigo-400 md:text-lg">
+                  How can I delete a file?
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-300">
+                  You can delete a file by accessing your dashboard and clicking
+                  on the "Delete file" icon. Keep in mind that you can only
+                  delete files which were created by you while being signed in.
+                </AccordionContent>
+              </AccordionItem> */}
+              <AccordionItem value="item-7" className="mb-4">
+                <AccordionTrigger className="text-base font-semibold text-white  md:text-lg">
+                  How can I compile or run the code?
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-300">
+                  You can&apos;t. Codeshare is not intended to run or compile
+                  code; it is just meant to share and edit code collaboratively.
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="item-8" className="mb-4">
+                <AccordionTrigger className="text-base font-semibold text-white md:text-lg">
+                  Can anyone see a file I created?
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-300">
+                  Yes, as long as they have the file link. So, never put
+                  confidential information inside a file.
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="item-9" className="mb-4">
+                <AccordionTrigger className="text-base font-semibold text-white md:text-lg">
+                  Can I prevent a file from being modified by other people?
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-300">
+                  Yes, just turn the &quot;view-only&quot; option on when you
+                  share the file or from your Dashboard. Keep in mind that this
+                  option can only be changed by the user who created the file.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>

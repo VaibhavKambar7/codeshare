@@ -104,7 +104,7 @@ const Navbar = ({ slug }: { slug: string }) => {
   console.log(urlToCopy);
 
   return (
-    <div className="flex h-16 items-center justify-between bg-[#1f1e1e] px-4 shadow-md">
+    <div className="flex h-16 items-center justify-between bg-[#1f1e1e] px-4 shadow-lg">
       <div className="flex items-center gap-6">
         <Link href="/" className="transition-opacity hover:opacity-80">
           <Image
@@ -112,20 +112,20 @@ const Navbar = ({ slug }: { slug: string }) => {
             alt="logo"
             width="36"
             height="36"
-            className="rounded-md"
+            className="rounded-md transition-transform hover:scale-105"
           />
         </Link>
         <Input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-64 border-none bg-[#212121] text-sm text-white focus:ring-0"
+          className="w-64 border-none bg-[#212121] text-sm text-white placeholder-gray-400 focus:border-transparent focus:outline-none focus:ring-0"
           placeholder="Enter title..."
         />
       </div>
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2 text-sm text-gray-400">
-          <FaUser size="14" />
+          <FaUser size="14" className="text-gray-400" />
           <span>{activeUsers}</span>
         </div>
         <Popover>
@@ -133,7 +133,7 @@ const Navbar = ({ slug }: { slug: string }) => {
             <Button
               variant="outline"
               size="sm"
-              className="border-0 bg-[#2D2D2D] text-white hover:bg-[#3a3a3a] hover:text-white"
+              className="border-0 bg-[#2D2D2D] text-white transition-colors duration-200 hover:bg-[#3a3a3a] hover:text-white"
               onClick={() => setUrlToCopy(currentUrl)}
             >
               <FiShare2 size="14" className="mr-2" />
@@ -141,7 +141,7 @@ const Navbar = ({ slug }: { slug: string }) => {
             </Button>
           </PopoverTrigger>
           <PopoverContent
-            className="mb-6 w-80 border border-gray-700 bg-[#212121] p-3"
+            className="mb-6 w-80 border border-gray-700 bg-[#212121] p-3 shadow-xl"
             align="end"
           >
             <div className="space-y-4">
@@ -149,12 +149,12 @@ const Navbar = ({ slug }: { slug: string }) => {
                 <Input
                   value={currentUrl + (isViewOnly ? "?mode=view" : "")}
                   readOnly
-                  className="flex-1 border-none bg-[#2D2D2D] text-sm text-white focus:ring-0"
+                  className="flex-1 border-none bg-[#2D2D2D] text-sm text-white placeholder-gray-400 focus:border-transparent focus:outline-none focus:ring-0"
                 />
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="h-8 w-8 hover:bg-[#3a3a3a]"
+                  className="h-9 w-9 transition-colors duration-200 hover:bg-[#3a3a3a]"
                   onClick={handleCopy}
                 >
                   <AnimatePresence mode="wait" initial={false}>
@@ -176,7 +176,7 @@ const Navbar = ({ slug }: { slug: string }) => {
               </div>
 
               {data ? (
-                <>
+                <div className="gap-0">
                   <div className="flex items-center justify-between">
                     <Label
                       htmlFor="view-only"
@@ -204,7 +204,7 @@ const Navbar = ({ slug }: { slug: string }) => {
                       When enabled, nobody can modify this file, except you.
                     </Label>
                   </div>
-                </>
+                </div>
               ) : (
                 <p className="text-xs text-gray-400">
                   {/* Sign in to enable view-only sharing */}
@@ -229,11 +229,11 @@ const Navbar = ({ slug }: { slug: string }) => {
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="end"
-                className="w-40 border border-gray-700 bg-[#1f1e1e] text-white"
+                className="w-40 border border-gray-700 bg-[#1f1e1e] text-white shadow-xl"
               >
                 <DropdownMenuItem
                   onClick={handleSignout}
-                  className="cursor-pointer hover:bg-[#2a2a2a]"
+                  className="cursor-pointer transition-colors duration-200 hover:bg-[#2a2a2a]"
                 >
                   Sign Out
                 </DropdownMenuItem>
@@ -244,7 +244,7 @@ const Navbar = ({ slug }: { slug: string }) => {
               onClick={handleSignin}
               variant="outline"
               size="sm"
-              className="border-0 bg-[#2D2D2D] text-white hover:bg-[#3a3a3a]"
+              className="border-0 bg-[#2D2D2D] text-white transition-colors duration-200 hover:bg-[#3a3a3a]"
             >
               <PiSignInLight size="16" className="mr-2" />
               Sign In
