@@ -27,5 +27,5 @@ jobs:
           npm run clean
           npm run build
           npm run build:wss
-          # pm2 restart app  # Use process manager to keep app running
+          npm run start:prod
           EOF
