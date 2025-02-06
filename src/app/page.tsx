@@ -97,7 +97,7 @@ export default function Component() {
               className="text-gray-300 hover:bg-[#474751] hover:text-white"
             >
               <FaQuestionCircle className="mr-2" />
-              FAQ
+              FAQs
             </Button>
           </nav>
           <div className="flex items-center space-x-4">

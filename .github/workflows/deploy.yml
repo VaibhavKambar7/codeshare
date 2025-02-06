@@ -9,25 +9,25 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Deploy to EC2
-      env:
-        PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY }}
-        HOST: ${{ secrets.EC2_HOST }}
-        USER: ${{ secrets.EC2_USER }}
-      run: |
-        echo "$PRIVATE_KEY" > codeshare.pem
-        chmod 600 codeshare.pem
-        ssh -o StrictHostKeyChecking=no -i codeshare.pem $USER@$HOST << 'EOF'
-        cd /path/to/your/app
-        git pull origin main
-        npm install  # Install dependencies
-        npm run clean  # Clean previous builds
-        npm run build  # Build Next.js app
-        npm run build:wss  # Build WebSocket server
-        # Additional steps like restarting services if needed
-        # Example:
-        npm run start:prod
-        EOF
+      - name: Deploy to EC2
+        env:
+          PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY }}
+          HOST: ${{ secrets.EC2_HOST }}
+          USER: ${{ secrets.EC2_USER }}
+        run: |
+          echo "$PRIVATE_KEY" > codeshare.pem
+          chmod 600 codeshare.pem
+          ssh -o StrictHostKeyChecking=no -i codeshare.pem $USER@$HOST << 'EOF'
+          cd /path/to/your/app
+          git pull origin main
+          npm install  # Install dependencies
+          npm run clean  # Clean previous builds
+          npm run build  # Build Next.js app
+          npm run build:wss  # Build WebSocket server
+          # Additional steps like restarting services if needed
+          # Example:
+          npm run start:prod
+          EOF
