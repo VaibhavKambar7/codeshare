@@ -21,7 +21,7 @@ jobs:
           echo "$PRIVATE_KEY" > codeshare.pem
           chmod 600 codeshare.pem
           ssh -o StrictHostKeyChecking=no -i codeshare.pem $USER@$HOST << 'EOF'
-          cd /path/to/your/app
+          cd /home/ubuntu/app
           git pull origin main
           npm install  # Install dependencies
           npm run clean  # Clean previous builds
