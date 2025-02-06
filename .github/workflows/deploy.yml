@@ -1,17 +1,56 @@
-name: Deploy to EC2
+# name: Deploy to EC2
 
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
+
+#       - name: Deploy to EC2
+#         env:
+#           PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY }}
+#           HOST: ${{ secrets.EC2_HOST }}
+#           USER: ${{ secrets.EC2_USER }}
+#         run: |
+#           echo "$PRIVATE_KEY" > codeshare.pem
+#           chmod 600 codeshare.pem
+#           ssh -o StrictHostKeyChecking=no -i codeshare.pem $USER@$HOST << 'EOF'
+#           cd /home/ubuntu/app
+#           git pull origin main
+#           npm ci  # Recommended over npm install for more consistent builds
+#           npm run clean
+#           npm run build
+#           npm run build:wss
+#           npm run start:prod
+#           EOF
+
+
+name: Deploy to EC2
 on:
   push:
-    branches:
-      - main
-
+    branches: [main]
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - run: npm ci
+      - run: |
+          npm run clean
+          npm run build
+          npm run build:wss
+          
       - name: Deploy to EC2
         env:
           PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY }}
@@ -20,12 +59,15 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > codeshare.pem
           chmod 600 codeshare.pem
+          
+          rsync -avz -e "ssh -i codeshare.pem" \
+            --exclude 'node_modules' \
+            --exclude '.git' \
+            ./ $USER@$HOST:/home/ubuntu/app/
+            
           ssh -o StrictHostKeyChecking=no -i codeshare.pem $USER@$HOST << 'EOF'
-          cd /home/ubuntu/app
-          git pull origin main
-          npm ci  # Recommended over npm install for more consistent builds
-          npm run clean
-          npm run build
-          npm run build:wss
-          npm run start:prod
+            cd /home/ubuntu/app
+            npm ci
+            npm run start:prod &
+            disown
           EOF
