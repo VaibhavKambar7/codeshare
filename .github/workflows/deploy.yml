@@ -23,11 +23,9 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i codeshare.pem $USER@$HOST << 'EOF'
           cd /home/ubuntu/app
           git pull origin main
-          npm install  # Install dependencies
-          npm run clean  # Clean previous builds
-          npm run build  # Build Next.js app
-          npm run build:wss  # Build WebSocket server
-          # Additional steps like restarting services if needed
-          # Example:
-          npm run start:prod
+          npm ci  # Recommended over npm install for more consistent builds
+          npm run clean
+          npm run build
+          npm run build:wss
+          # pm2 restart app  # Use process manager to keep app running
           EOF
