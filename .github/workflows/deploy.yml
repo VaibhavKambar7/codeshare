@@ -69,7 +69,7 @@ jobs:
           echo "$PRIVATE_KEY" > codeshare.pem
           chmod 600 codeshare.pem
           
-          rsync -avz -e "ssh -i codeshare.pem" \
+          rsync -avz -e "ssh -i codeshare.pem -o StrictHostKeyChecking=no" \
             --exclude 'node_modules' \
             --exclude '.git' \
             ./ $USER@$HOST:/home/ubuntu/app/
