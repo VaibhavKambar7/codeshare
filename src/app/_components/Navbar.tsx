@@ -129,7 +129,7 @@ const Navbar = ({ slug }: { slug: string }) => {
           <span>{activeUsers}</span>
         </div>
         <Popover>
-          <PopoverTrigger asChild>
+          <PopoverTrigger asChild={true}>
             <Button
               variant="outline"
               size="sm"
@@ -221,7 +221,7 @@ const Navbar = ({ slug }: { slug: string }) => {
           // ) :
           status === "authenticated" ? (
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+              <DropdownMenuTrigger asChild={true}>
                 <Avatar className="h-8 w-8 cursor-pointer ring-offset-background transition-opacity hover:opacity-80">
                   <AvatarImage src={image ?? ""} />
                   {/* <AvatarFallback>😎</AvatarFallback> */}

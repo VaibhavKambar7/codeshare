@@ -15,6 +15,7 @@ const createContext = async ({}: CreateWSSContextFnOptions) => {
 
 const wss = new WebSocketServer({
   port: 3001,
+  host: "localhost",
 });
 
 const handler = applyWSSHandler({

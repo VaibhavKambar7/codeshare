@@ -72,21 +72,21 @@ export default function Component() {
   return (
     <div className="polka-dot relative flex min-h-screen flex-col bg-gray-900 text-gray-100">
       <header className="sticky top-0 z-50 bg-[#1c1b1b] bg-opacity-80 shadow-md backdrop-blur-md">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4">
+        <div className="container mx-auto flex h-14 items-center justify-between px-4">
           <Link className="flex items-center space-x-2" href="#">
             <Image
               src="/assets/coding.png"
-              width="36"
-              height="36"
+              width="30"
+              height="30"
               alt="CodeShare Logo"
             />
-            <span className="text-xl font-bold text-white">CodeShare</span>
+            <span className="text-lg font-bold text-white">CodeShare</span>
           </Link>
           <nav className="hidden space-x-4 md:flex">
             <Button
               onClick={() => scrollToSection("features")}
               variant="ghost"
-              className="text-gray-300"
+              className="text-gray-300 hover:bg-[#474751] hover:text-white"
             >
               <FaListUl className="mr-2" />
               Features
@@ -94,7 +94,7 @@ export default function Component() {
             <Button
               onClick={() => scrollToSection("faq")}
               variant="ghost"
-              className="text-gray-300"
+              className="text-gray-300 hover:bg-[#474751] hover:text-white"
             >
               <FaQuestionCircle className="mr-2" />
               FAQ
@@ -104,7 +104,7 @@ export default function Component() {
             {status === "authenticated" ? (
               <DropdownMenu>
                 <DropdownMenuTrigger>
-                  <Avatar className="h-8 w-8 cursor-pointer">
+                  <Avatar className="h-7 w-7 cursor-pointer">
                     <AvatarImage src={image ?? ""} />
                     <AvatarFallback>
                       {data?.user?.name?.charAt(0) ?? "U"}
@@ -127,42 +127,38 @@ export default function Component() {
                 className="border-3px border-white bg-[#17171a] text-white hover:bg-[#474751]"
               >
                 Sign In
-                <PiSignInLight size="18" className="ml-2" />
+                <PiSignInLight size="16" className="ml-2" />
               </Button>
             )}
           </div>
         </div>
       </header>
       <main className="flex-1">
-        <section
-          className="hero-gradient md:py-22 lg:py-30 py-18 relative w-full 
-        xl:py-40"
-        >
-          {/* <section className="hero-gradient relative w-full py-24 md:py-32 lg:py-40 xl:py-48"> */}
+        <section className="hero-gradient relative w-full py-24 md:py-28 lg:py-32">
           <div className="container mx-auto px-4">
-            <div className="flex flex-col items-center space-y-4 text-center lg:space-y-12">
-              <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+            <div className="flex flex-col items-center space-y-4 text-center lg:space-y-8">
+              <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
                 <span className="gradient-text">Collaborate on code</span>
                 <br />
                 with developers
               </h1>
-              <p className="max-w-2xl text-lg text-gray-300 md:text-xl">
+              <p className="max-w-2xl text-base text-gray-300 md:text-lg">
                 Collaborate in real-time, share code, and bring ideas to life
                 with developers worldwide.
               </p>
               <Button
                 onClick={handleButtonClick}
-                className="transform rounded-lg bg-white px-4 py-4 text-base text-black shadow-lg hover:bg-slate-300 md:px-6 md:py-6 md:text-lg"
+                className="w-30 h-11 transform rounded-lg bg-white text-base text-black shadow-lg hover:bg-slate-300 md:px-5 md:py-4"
               >
-                <FilePlus className="mr-2 h-5 w-5 md:h-6 md:w-6" />
+                <FilePlus className="mr-2 h-4 w-4 md:h-5 md:w-5" />
                 New File
               </Button>
             </div>
           </div>
         </section>
-        <section id="features" className="bg-[#111111] px-6 py-32 md:px-12">
+        <section id="features" className="bg-[#111111] px-6 py-24 md:px-12">
           <div className="container mx-auto max-w-6xl">
-            <h2 className="mb-24 text-center text-3xl font-bold text-white md:text-4xl">
+            <h2 className="mb-16 text-center text-2xl font-bold text-white md:text-3xl">
               Powerful Features
             </h2>
 
@@ -171,13 +167,13 @@ export default function Component() {
               whileInView="visible"
               viewport={{ once: true }}
               variants={stagger}
-              className="mb-24 grid grid-cols-1 items-center gap-12 md:grid-cols-2"
+              className="mb-16 grid grid-cols-1 items-center gap-8 md:grid-cols-2"
             >
-              <motion.div variants={fadeInUp} className="space-y-6">
-                <h3 className="text-2xl font-bold text-white">
+              <motion.div variants={fadeInUp} className="space-y-4">
+                <h3 className="text-xl font-bold text-white">
                   Real-time Collaboration
                 </h3>
-                <p className="text-lg text-gray-300">
+                <p className="text-base text-gray-300">
                   Work seamlessly with your team in real-time. View active users
                   in the editor, with upcoming features such as cursor tracking
                   and selection sharing for an enhanced collaborative
@@ -186,7 +182,7 @@ export default function Component() {
               </motion.div>
               <motion.div
                 variants={fadeInUp}
-                className="feature-image relative h-[320px] overflow-hidden rounded-xl"
+                className="feature-image relative h-[280px] overflow-hidden rounded-xl"
               >
                 <Image
                   src="/assets/collab.png"
@@ -202,11 +198,11 @@ export default function Component() {
               whileInView="visible"
               viewport={{ once: true }}
               variants={stagger}
-              className="mb-32 grid grid-cols-1 items-center gap-12 md:grid-cols-2"
+              className="mb-24 grid grid-cols-1 items-center gap-8 md:grid-cols-2"
             >
               <motion.div
                 variants={fadeInUp}
-                className="feature-image relative order-2 h-[320px] overflow-hidden rounded-xl md:order-1"
+                className="feature-image relative order-2 h-[280px] overflow-hidden rounded-xl md:order-1"
               >
                 <Image
                   src="/assets/fab.png"
@@ -217,12 +213,12 @@ export default function Component() {
               </motion.div>
               <motion.div
                 variants={fadeInUp}
-                className="order-1 space-y-6 md:order-2"
+                className="order-1 space-y-4 md:order-2"
               >
-                <h3 className="text-2xl font-bold text-white">
+                <h3 className="text-xl font-bold text-white">
                   Floating Action Bar
                 </h3>
-                <p className="text-lg text-gray-300">
+                <p className="text-base text-gray-300">
                   Enhance your coding experience with a floating action bar that
                   provides quick access to essential tools like fullscreen mode,
                   copy functionality, file favoriting, and more.
@@ -235,11 +231,11 @@ export default function Component() {
               whileInView="visible"
               viewport={{ once: true }}
               variants={stagger}
-              className="mb-32 grid grid-cols-1 items-center gap-12 md:grid-cols-2"
+              className="mb-24 grid grid-cols-1 items-center gap-8 md:grid-cols-2"
             >
-              <motion.div variants={fadeInUp} className="space-y-6">
-                <h3 className="text-2xl font-bold text-white">Quick Search</h3>
-                <p className="text-lg text-gray-300">
+              <motion.div variants={fadeInUp} className="space-y-4">
+                <h3 className="text-xl font-bold text-white">Quick Search</h3>
+                <p className="text-base text-gray-300">
                   Find files instantly with an intelligent search feature that
                   allows you to filter through your codebase efficiently,
                   including a dedicated section for your favorite files.
@@ -247,7 +243,7 @@ export default function Component() {
               </motion.div>
               <motion.div
                 variants={fadeInUp}
-                className="feature-image relative h-[320px] overflow-hidden rounded-xl"
+                className="feature-image relative h-[280px] overflow-hidden rounded-xl"
               >
                 <Image
                   src="/assets/search2.png"
@@ -263,11 +259,11 @@ export default function Component() {
               whileInView="visible"
               viewport={{ once: true }}
               variants={stagger}
-              className="grid grid-cols-1 items-center gap-12 md:grid-cols-2"
+              className="grid grid-cols-1 items-center gap-8 md:grid-cols-2"
             >
               <motion.div
                 variants={fadeInUp}
-                className="feature-image relative order-2 h-[320px] overflow-hidden rounded-xl md:order-1"
+                className="feature-image relative order-2 h-[280px] overflow-hidden rounded-xl md:order-1"
               >
                 <Image
                   src="/assets/share4.png"
@@ -278,25 +274,25 @@ export default function Component() {
               </motion.div>
               <motion.div
                 variants={fadeInUp}
-                className="order-1 space-y-6 md:order-2"
+                className="order-1 space-y-4 md:order-2"
               >
-                <h3 className="text-2xl font-bold text-white">
+                <h3 className="text-xl font-bold text-white">
                   Instant Sharing
                 </h3>
-                <p className="text-lg text-gray-300">
+                <p className="text-base text-gray-300">
                   Share your code effortlessly with a single click. Use the
-                  <p>View-only mode: &quot;read-only&quot;</p>
-                  option to allow others to see your work without making
-                  changes, ensuring full control over your code.
+                  View-only mode: &quot;read-only&quot; option to allow others
+                  to see your work without making changes, ensuring full control
+                  over your code.
                 </p>
               </motion.div>
             </motion.div>
           </div>
         </section>
 
-        <section id="faq" className="w-full bg-[#111111] py-32 md:py-40">
+        <section id="faq" className="w-full bg-[#111111] py-24 md:py-32">
           <div className="container mx-auto px-4">
-            <h2 className="text-slate-4 mb-16 text-center text-2xl font-bold md:mb-20 md:text-3xl lg:text-4xl">
+            <h2 className="text-slate-4 mb-12 text-center text-xl font-bold md:mb-16 md:text-2xl">
               Frequently Asked Questions
             </h2>
             <Accordion
@@ -304,41 +300,8 @@ export default function Component() {
               collapsible
               className="mx-auto w-full max-w-2xl"
             >
-              {/* <AccordionItem value="item-1" className="mb-4">
-                <AccordionTrigger className="text-base font-semibold text-white md:text-lg">
-                  How does CodeShare work?
-                </AccordionTrigger>
-                <AccordionContent className="text-gray-300">
-                  CodeShare uses real-time synchronization to allow multiple
-                  users to edit the same file simultaneously. Our advanced
-                  conflict resolution ensures smooth collaboration without data
-                  loss.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="item-2" className="mb-4">
-                <AccordionTrigger className="text-base font-semibold text-white  md:text-lg">
-                  Is CodeShare free to use?
-                </AccordionTrigger>
-                <AccordionContent className="text-gray-300">
-                  Yes, CodeShare offers a free tier with basic features. Premium
-                  plans are available for advanced functionality, including
-                  unlimited collaborators, extended file history, and priority
-                  support.
-                </AccordionContent>
-              </AccordionItem> */}
-              {/* <AccordionItem value="item-3" className="mb-4">
-                <AccordionTrigger className="text-base font-semibold text-white hover:text-indigo-400 md:text-lg">
-                  What programming languages does CodeShare support?
-                </AccordionTrigger>
-                <AccordionContent className="text-gray-300">
-                  CodeShare supports a wide range of programming languages,
-                  including but not limited to JavaScript, Python, Java, C++,
-                  Ruby, and many more. Our syntax highlighting and
-                  language-specific features enhance the coding experience.
-                </AccordionContent>
-              </AccordionItem> */}
               <AccordionItem value="item-4" className="mb-4">
-                <AccordionTrigger className="text-base font-semibold text-white  md:text-lg">
+                <AccordionTrigger className="text-base font-semibold text-white md:text-lg">
                   What can I use Codeshare for?
                 </AccordionTrigger>
                 <AccordionContent className="text-gray-300">
@@ -348,25 +311,15 @@ export default function Component() {
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="item-5" className="mb-4">
-                <AccordionTrigger className="text-base font-semibold text-white  md:text-lg">
+                <AccordionTrigger className="text-base font-semibold text-white md:text-lg">
                   How long does a file last?
                 </AccordionTrigger>
                 <AccordionContent className="text-gray-300">
                   Forever (unless the creator of the file deletes it).
                 </AccordionContent>
               </AccordionItem>
-              {/* <AccordionItem value="item-6" className="mb-4">
-                <AccordionTrigger className="text-base font-semibold text-white hover:text-indigo-400 md:text-lg">
-                  How can I delete a file?
-                </AccordionTrigger>
-                <AccordionContent className="text-gray-300">
-                  You can delete a file by accessing your dashboard and clicking
-                  on the "Delete file" icon. Keep in mind that you can only
-                  delete files which were created by you while being signed in.
-                </AccordionContent>
-              </AccordionItem> */}
               <AccordionItem value="item-7" className="mb-4">
-                <AccordionTrigger className="text-base font-semibold text-white  md:text-lg">
+                <AccordionTrigger className="text-base font-semibold text-white md:text-lg">
                   How can I compile or run the code?
                 </AccordionTrigger>
                 <AccordionContent className="text-gray-300">
@@ -404,16 +357,16 @@ export default function Component() {
               <Link href="#" className="flex items-center">
                 <Image
                   src="/assets/coding.png"
-                  width="24"
-                  height="24"
+                  width="20"
+                  height="20"
                   alt="CodeShare Logo"
                   className="mr-2"
                 />
-                <span className="text-lg font-semibold text-white">
+                <span className="text-base font-semibold text-white">
                   CodeShare
                 </span>
               </Link>
-              <p className="mt-2 text-sm">
+              <p className="mt-2 text-xs">
                 © 2025 CodeShare. All rights reserved.
               </p>
             </div>

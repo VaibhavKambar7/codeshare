@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, forwardRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiMaximize, FiCopy, FiHeart } from "react-icons/fi";
 import { VscSettings } from "react-icons/vsc";
@@ -20,6 +20,13 @@ import { Dialog, DialogContent } from "./ui/dialog";
 import { PiSpinnerBold } from "react-icons/pi";
 import { useRouter } from "next/navigation";
 import { Button } from "./ui/button";
+
+const ForwardRefButton = forwardRef<
+  HTMLButtonElement,
+  React.ComponentProps<typeof Button>
+>((props, ref) => <Button ref={ref} {...props} />);
+
+ForwardRefButton.displayName = "ForwardRefButton";
 
 const FloatingActionBar = ({ slug }: { slug: string }) => {
   const [isCopied, setIsCopied] = useState(false);
@@ -122,28 +129,30 @@ const FloatingActionBar = ({ slug }: { slug: string }) => {
   };
 
   return (
-    <div className="fixed bottom-5 left-1/2 flex -translate-x-1/2 transform gap-4 rounded-lg bg-[#171717] p-3 shadow-lg">
+    <div className="fixed bottom-5 left-1/2 flex -translate-x-1/2 transform gap-3 rounded-lg bg-[#171717] p-3 shadow-lg">
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="flex max-h-[80vh] min-h-[80vh] w-full max-w-lg flex-col overflow-hidden border-2 border-[#36383a] bg-[#2e3033]">
-          <div className="flex flex-row items-center justify-between border-b border-[#36383a] ">
-            <Button
+          <div className="flex flex-row items-center justify-between border-b border-[#36383a]">
+            <ForwardRefButton
               onClick={() => setSelectedTab("recents")}
-              className={`${selectedTab === "recents" ? "border-b-2 border-[#474747]" : "border-b-2 border-transparent"} box-border flex flex-1 items-center justify-center  rounded-none
-              bg-[#2e3033] px-4 py-6
-                text-center text-sm font-semibold
-                leading-none text-[#d1d1db] hover:bg-[#3f4042]`}
+              className={`${
+                selectedTab === "recents"
+                  ? "border-b-2 border-[#474747]"
+                  : "border-b-2 border-transparent"
+              } box-border flex flex-1 items-center justify-center rounded-none bg-[#2e3033] px-4 py-6 text-center text-sm font-semibold leading-none text-[#d1d1db] hover:bg-[#3f4042]`}
             >
               Recents
-            </Button>
-            <Button
+            </ForwardRefButton>
+            <ForwardRefButton
               onClick={() => setSelectedTab("favourites")}
-              className={`${selectedTab === "favourites" ? "border-b-2 border-[#474747]" : "border-b-2 border-transparent"} box-border flex flex-1 items-center justify-center  rounded-none
-              bg-[#2e3033] px-4 py-6
-                text-center text-sm font-semibold
-                leading-none text-[#d1d1db] hover:bg-[#3f4042]`}
+              className={`${
+                selectedTab === "favourites"
+                  ? "border-b-2 border-[#474747]"
+                  : "border-b-2 border-transparent"
+              } box-border flex flex-1 items-center justify-center rounded-none bg-[#2e3033] px-4 py-6 text-center text-sm font-semibold leading-none text-[#d1d1db] hover:bg-[#3f4042]`}
             >
               Favourites
-            </Button>
+            </ForwardRefButton>
           </div>
 
           <div className="flex-1">
@@ -209,23 +218,26 @@ const FloatingActionBar = ({ slug }: { slug: string }) => {
       </Dialog>
       <TooltipProvider>
         <Tooltip>
-          <TooltipTrigger>
-            <button
-              className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#212121] text-white hover:bg-[#313131]"
+          <TooltipTrigger asChild>
+            <ForwardRefButton
+              variant="ghost"
+              className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#212121] p-0 text-white hover:bg-[#313131] hover:text-white"
               onClick={toggleFullscreen}
             >
-              <FiMaximize size="14" />
-            </button>
+              <>
+                <FiMaximize className="h-4 w-4" />
+              </>
+            </ForwardRefButton>
           </TooltipTrigger>
           <TooltipContent className="mb-3 border-0 bg-black text-white">
             <p>Enter fullscreen</p>
           </TooltipContent>
         </Tooltip>
-
         <Tooltip>
-          <TooltipTrigger>
-            <button
-              className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#212121] text-white hover:bg-[#2d2d2d]"
+          <TooltipTrigger asChild>
+            <ForwardRefButton
+              variant="ghost"
+              className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#212121] p-0 text-white hover:bg-[#2d2d2d] hover:text-white"
               onClick={handleCopy}
             >
               <AnimatePresence initial={false} mode="wait">
@@ -239,67 +251,71 @@ const FloatingActionBar = ({ slug }: { slug: string }) => {
                   {isCopied ? (
                     <FontAwesomeIcon
                       icon={faCheck}
-                      className="mt-[2px] size-[15px] text-green-500"
+                      className="mt-[2px] h-4 w-4 text-green-500"
                     />
                   ) : (
-                    <FiCopy size="14" />
+                    <FiCopy className="h-4 w-4" />
                   )}
                 </motion.div>
               </AnimatePresence>
-            </button>
+            </ForwardRefButton>
           </TooltipTrigger>
           <TooltipContent className="mb-3 border-0 bg-black text-white">
             <p>{isCopied ? "Copied!" : "Copy"}</p>
           </TooltipContent>
         </Tooltip>
-
         <Tooltip>
-          <TooltipTrigger>
-            <button
+          <TooltipTrigger asChild>
+            <ForwardRefButton
+              variant="ghost"
               onClick={handleFavourite}
-              className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#212121] text-white hover:bg-[#2d2d2d]"
+              className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#212121] p-0 text-white hover:bg-[#2d2d2d] hover:text-white"
               aria-label={
                 isFavourite ? "Added to favorites" : "Removed from favorites"
               }
             >
               <FiHeart
-                size={14}
+                className="h-4 w-4"
                 fill={isFavourite ? "red" : "none"}
-                className={isFavourite ? "text-red-900" : "text-white"}
+                style={isFavourite ? { color: "rgb(127, 29, 29)" } : {}}
               />
-            </button>
+            </ForwardRefButton>
           </TooltipTrigger>
           <TooltipContent className="mb-3 border-0 bg-black text-white">
             <p>{!isFavourite ? "Add to favorites" : "Remove from favorites"}</p>
           </TooltipContent>
         </Tooltip>
-
         <Sheet>
-          <SheetTrigger>
-            <Tooltip>
-              <TooltipTrigger>
-                <button className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#212121] text-white hover:bg-[#2d2d2d]">
-                  <VscSettings size="17" />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent className="mb-3 border-0 bg-black text-white">
-                <p>Settings</p>
-              </TooltipContent>
-            </Tooltip>
+          <SheetTrigger asChild>
+            <div>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <ForwardRefButton
+                    variant="ghost"
+                    className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#212121] p-0 text-white hover:bg-[#2d2d2d] hover:text-white"
+                  >
+                    <VscSettings className="h-4 w-4" />
+                  </ForwardRefButton>
+                </TooltipTrigger>
+                <TooltipContent className="mb-3 border-0 bg-black text-white">
+                  <p>Settings</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
           </SheetTrigger>
           <SheetContent className="bg-[#1e1e1e] text-white">
             <Sidebar />
           </SheetContent>
         </Sheet>
-
         <Tooltip>
-          <TooltipTrigger>
-            <button
-              className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#212121] text-white hover:bg-[#313131]"
+          <TooltipTrigger asChild>
+            <ForwardRefButton
+              variant="ghost"
+              className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#212121] p-0 text-white hover:bg-[#313131] hover:text-white"
               onClick={handleSearch}
             >
-              <MdManageSearch size="20" />
-            </button>
+              <MdManageSearch className="h-4 w-4" />
+            </ForwardRefButton>
           </TooltipTrigger>
           <TooltipContent className="mb-3 border-0 bg-black text-white">
             <p>Search files (CTRL + K)</p>
