@@ -146,7 +146,7 @@ jobs:
             npm ci
 
             export DATABASE_URL="${{ secrets.DATABASE_URL }}"
-            export NEXTAUTH_URL="https://codeshare.lol/api/auth"
+            export NEXTAUTH_URL="https://codeshare.lol"
             export NEXT_PUBLIC_WS_URL="wss://codeshare.lol:3001"
 
             echo "Starting the application..."

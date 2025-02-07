@@ -244,7 +244,7 @@ const Navbar = ({ slug }: { slug: string }) => {
               onClick={handleSignin}
               variant="outline"
               size="sm"
-              className="border-0 bg-[#2D2D2D] text-white transition-colors duration-200 hover:bg-[#3a3a3a]"
+              className="border-0 bg-[#2D2D2D] text-white transition-colors duration-200 hover:bg-[#3a3a3a] hover:text-white"
             >
               <PiSignInLight size="16" className="mr-2" />
               Sign In

@@ -86,7 +86,7 @@ export default function Component() {
             <Button
               onClick={() => scrollToSection("features")}
               variant="ghost"
-              className="text-gray-300 hover:bg-[#474751] hover:text-white"
+              className="h-10 text-gray-300 hover:bg-[#27272d] hover:text-white"
             >
               <FaListUl className="mr-2" />
               Features
@@ -94,42 +94,51 @@ export default function Component() {
             <Button
               onClick={() => scrollToSection("faq")}
               variant="ghost"
-              className="text-gray-300 hover:bg-[#474751] hover:text-white"
+              className="h-10 text-gray-300 hover:bg-[#27272d] hover:text-white"
             >
               <FaQuestionCircle className="mr-2" />
               FAQs
             </Button>
           </nav>
           <div className="flex items-center space-x-4">
-            {status === "authenticated" ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger>
-                  <Avatar className="h-7 w-7 cursor-pointer">
-                    <AvatarImage src={image ?? ""} />
-                    <AvatarFallback>
-                      {data?.user?.name?.charAt(0) ?? "U"}
-                    </AvatarFallback>
-                  </Avatar>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="mt-2 border-gray-700 bg-gray-800">
-                  <DropdownMenuItem
-                    onClick={handleSignout}
-                    className="text-white hover:bg-gray-700"
+            {
+              // status === "loading" ? (
+              // <Avatar className="h-8 w-8">
+              //   <AvatarFallback>😎</AvatarFallback>
+              // </Avatar>
+              // ) :
+              status === "authenticated" ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild={true}>
+                    <Avatar className="h-8 w-8 cursor-pointer ring-offset-background transition-opacity hover:opacity-80">
+                      <AvatarImage src={image ?? ""} />
+                      {/* <AvatarFallback>😎</AvatarFallback> */}
+                    </Avatar>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="end"
+                    className="w-40 border border-gray-700 bg-[#1f1e1e] text-white shadow-xl"
                   >
-                    Sign Out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <Button
-                onClick={handleSignin}
-                variant="default"
-                className="border-3px border-white bg-[#17171a] text-white hover:bg-[#474751]"
-              >
-                Sign In
-                <PiSignInLight size="16" className="ml-2" />
-              </Button>
-            )}
+                    <DropdownMenuItem
+                      onClick={handleSignout}
+                      className="cursor-pointer transition-colors duration-200 hover:bg-[#2a2a2a]"
+                    >
+                      Sign Out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button
+                  onClick={handleSignin}
+                  variant="outline"
+                  size="sm"
+                  className="border-0 bg-[#2D2D2D] text-white transition-colors duration-200 hover:bg-[#3a3a3a] hover:text-white"
+                >
+                  <PiSignInLight size="16" className="mr-2" />
+                  Sign In
+                </Button>
+              )
+            }
           </div>
         </div>
       </header>
