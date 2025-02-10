@@ -86,72 +86,72 @@
 #             disown
 #             EOF
 
-name: Deploy to EC2
+# name: Deploy to EC2
 
-on:
-  push:
-    branches: [main]
+# on:
+#   push:
+#     branches: [main]
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v4
+#     steps:
+#       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
+#       - uses: actions/setup-node@v4
+#         with:
+#           node-version: "20"
+#           cache: "npm"
 
-      - run: npm ci
+#       - run: npm ci
 
-      - run: |
-          npm run clean
-          npm run build
-          npm run build:wss
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          DIRECT_URL: ${{ secrets.DIRECT_URL }}
-          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
-          NEXTAUTH_URL: "https://codeshare.lol/api/auth"
-          NODE_ENV: "production"
-          WS_PORT: "3001"
-          NEXT_PUBLIC_WS_URL: "wss://codeshare.lol:3001"
+#       - run: |
+#           npm run clean
+#           npm run build
+#           npm run build:wss
+#         env:
+#           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+#           DIRECT_URL: ${{ secrets.DIRECT_URL }}
+#           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+#           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+#           NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+#           NEXTAUTH_URL: "https://codeshare.lol/api/auth"
+#           NODE_ENV: "production"
+#           WS_PORT: "3001"
+#           NEXT_PUBLIC_WS_URL: "wss://codeshare.lol:3001"
 
-      - name: Deploy to EC2
-        env:
-          PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY }}
-          HOST: ${{ secrets.EC2_HOST }}
-          USER: ${{ secrets.EC2_USER }}
-        run: |
-          echo "$PRIVATE_KEY" > codeshare.pem
-          chmod 600 codeshare.pem
+#       - name: Deploy to EC2
+#         env:
+#           PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY }}
+#           HOST: ${{ secrets.EC2_HOST }}
+#           USER: ${{ secrets.EC2_USER }}
+#         run: |
+#           echo "$PRIVATE_KEY" > codeshare.pem
+#           chmod 600 codeshare.pem
 
-          rsync -avz -e "ssh -i codeshare.pem -o StrictHostKeyChecking=no" \
-            --exclude 'node_modules' \
-            --exclude '.git' \
-            ./ $USER@$HOST:/home/ubuntu/app/
+#           rsync -avz -e "ssh -i codeshare.pem -o StrictHostKeyChecking=no" \
+#             --exclude 'node_modules' \
+#             --exclude '.git' \
+#             ./ $USER@$HOST:/home/ubuntu/app/
 
-          ssh -o StrictHostKeyChecking=no -i codeshare.pem $USER@$HOST << 'EOF'
-            cd /home/ubuntu/app
+#           ssh -o StrictHostKeyChecking=no -i codeshare.pem $USER@$HOST << 'EOF'
+#             cd /home/ubuntu/app
 
-            echo "Killing existing Node.js processes..."
-            pkill -f node || true
-            sleep 2  
+#             echo "Killing existing Node.js processes..."
+#             pkill -f node || true
+#             sleep 2  
 
-            echo "Installing dependencies..."
-            npm ci
+#             echo "Installing dependencies..."
+#             npm ci
 
-            export DATABASE_URL="${{ secrets.DATABASE_URL }}"
-            export NEXTAUTH_URL="https://codeshare.lol"
-            export NEXT_PUBLIC_WS_URL="wss://codeshare.lol:3001"
+#             export DATABASE_URL="${{ secrets.DATABASE_URL }}"
+#             export NEXTAUTH_URL="https://codeshare.lol"
+#             export NEXT_PUBLIC_WS_URL="wss://codeshare.lol:3001"
 
-            echo "Starting the application..."
-            npm run start:prod &
-            disown
+#             echo "Starting the application..."
+#             npm run start:prod &
+#             disown
 
-            echo "Deployment complete!"
-            EOF
+#             echo "Deployment complete!"
+#             EOF

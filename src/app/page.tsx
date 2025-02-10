@@ -70,8 +70,8 @@ export default function Component() {
   const image = data?.user?.image;
 
   return (
-    <div className="polka-dot relative flex min-h-screen flex-col bg-gray-900 text-gray-100">
-      <header className="sticky top-0 z-50 bg-[#1c1b1b] bg-opacity-80 shadow-md backdrop-blur-md">
+    <div className="cursor:default relative flex min-h-screen flex-col bg-gradient-to-b from-[#1b1b1c] to-[#111111]  text-gray-100">
+      <header className="sticky top-0 z-50 bg-opacity-80 backdrop-blur-md">
         <div className="container mx-auto flex h-14 items-center justify-between px-4">
           <Link className="flex items-center space-x-2" href="#">
             <Image
@@ -86,17 +86,15 @@ export default function Component() {
             <Button
               onClick={() => scrollToSection("features")}
               variant="ghost"
-              className="h-10 text-gray-300 hover:bg-[#27272d] hover:text-white"
+              className="h-10 text-gray-300 hover:bg-transparent hover:text-white"
             >
-              <FaListUl className="mr-2" />
               Features
             </Button>
             <Button
               onClick={() => scrollToSection("faq")}
               variant="ghost"
-              className="h-10 text-gray-300 hover:bg-[#27272d] hover:text-white"
+              className="h-10 text-gray-300 hover:bg-transparent hover:text-white"
             >
-              <FaQuestionCircle className="mr-2" />
               FAQs
             </Button>
           </nav>
@@ -132,7 +130,7 @@ export default function Component() {
                   onClick={handleSignin}
                   variant="outline"
                   size="sm"
-                  className="border-0 bg-[#2D2D2D] text-white transition-colors duration-200 hover:bg-[#3a3a3a] hover:text-white"
+                  className="border-0 bg-transparent text-white transition-colors duration-200 hover:bg-[#3a3a3a] hover:text-white"
                 >
                   <PiSignInLight size="16" className="mr-2" />
                   Sign In
@@ -143,7 +141,7 @@ export default function Component() {
         </div>
       </header>
       <main className="flex-1">
-        <section className="hero-gradient relative w-full py-24 md:py-28 lg:py-32">
+        <section className="relative w-full bg-gradient-to-b from-[#1c1b1b] to-[#111111] py-24 md:py-28 lg:py-32">
           <div className="container mx-auto px-4">
             <div className="flex flex-col items-center space-y-4 text-center lg:space-y-8">
               <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
@@ -168,7 +166,7 @@ export default function Component() {
         <section id="features" className="bg-[#111111] px-6 py-24 md:px-12">
           <div className="container mx-auto max-w-6xl">
             <h2 className="mb-16 text-center text-2xl font-bold text-white md:text-3xl">
-              Powerful Features
+              Features
             </h2>
 
             <motion.div
@@ -290,7 +288,7 @@ export default function Component() {
                 </h3>
                 <p className="text-base text-gray-300">
                   Share your code effortlessly with a single click. Use the
-                  View-only mode: &quot;read-only&quot; option to allow others
+                  View-only mode: &quot;view-only&quot; option to allow others
                   to see your work without making changes, ensuring full control
                   over your code.
                 </p>

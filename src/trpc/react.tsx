@@ -35,6 +35,10 @@ function getBaseUrl() {
 
 export function getWsUrl() {
   if (typeof window !== "undefined") {
+    // const hostname = window.location.hostname;
+    // if (process.env.NODE_ENV === "production") {
+    //   return `wss://${hostname}/ws`;
+    // }
     const hostname = window.location.hostname;
     if (process.env.NODE_ENV === "production") {
       return `wss://${hostname}/ws`;
