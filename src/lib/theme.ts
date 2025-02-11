@@ -112,6 +112,7 @@ const themes = {
 
 const languages = [
   "javascript",
+  "typescript",
   "python",
   "java",
   "csharp",

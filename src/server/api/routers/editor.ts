@@ -69,6 +69,7 @@ export const userFileRouter = createTRPCRouter({
                 update: {
                   title: fileData.title ?? null,
                   content: fileData.content,
+                  language: fileData.language,
                   owner: {
                     connect: {
                       id: user.id,
@@ -79,6 +80,7 @@ export const userFileRouter = createTRPCRouter({
                   title: fileData.title,
                   content: fileData.content,
                   link: fileData.link,
+                  language: fileData.language,
                   owner: {
                     connect: {
                       id: user.id,
@@ -99,11 +101,13 @@ export const userFileRouter = createTRPCRouter({
             update: {
               title: fileData.title ?? "Untitled",
               content: fileData.content,
+              language: fileData.language,
             },
             create: {
               title: fileData.title,
               content: fileData.content,
               link: fileData.link,
+              language: fileData.language,
             },
             include: {
               owner: true,
@@ -158,6 +162,7 @@ export const userFileRouter = createTRPCRouter({
         content: file.content,
         title: file.title,
         isFavourite: file.isFavourite,
+        language: (file.language as string | null | undefined) ?? "",
         userEmail: file?.owner?.email,
         isViewOnly: file?.isViewOnly,
       };

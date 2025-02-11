@@ -9,13 +9,16 @@ import {
 import { languages, themes } from "../../lib/theme";
 import { useTheme } from "../context/themeContext";
 
-const Sidebar = () => {
+const Sidebar = ({ slug }: { slug: string }) => {
   const { theme, setTheme, language, setLanguage } = useTheme();
+
   const handleThemeChange = (value: string) => {
     setTheme(value);
   };
+
   const handleLanguageChange = (value: string) => {
     setLanguage(value);
+    localStorage.setItem(`editorLanguage_${slug}`, language);
   };
 
   return (
@@ -30,10 +33,10 @@ const Sidebar = () => {
             Theme:
           </label>
           <Select value={theme} onValueChange={handleThemeChange}>
-            <SelectTrigger className="w-[140px] bg-[#2e3033] text-[#d1d1db]">
+            <SelectTrigger className="h-10 w-48 bg-[#2e3033] text-[#d1d1db]">
               <SelectValue placeholder="Theme" />
             </SelectTrigger>
-            <SelectContent className="border-black-300 bg-[#2e3033] text-white">
+            <SelectContent className="border-black-300 max-h-60 w-48 overflow-y-auto bg-[#2e3033] text-white">
               {Object.keys(themes).map((theme) => (
                 <SelectItem
                   key={theme}
@@ -52,10 +55,10 @@ const Sidebar = () => {
             Language:
           </label>
           <Select value={language} onValueChange={handleLanguageChange}>
-            <SelectTrigger className="w-[140px] bg-[#2e3033] text-[#d1d1db]">
+            <SelectTrigger className="h-10 w-48 bg-[#2e3033] text-[#d1d1db]">
               <SelectValue placeholder="Language" />
             </SelectTrigger>
-            <SelectContent className="border-black-300 bg-[#2e3033] text-white">
+            <SelectContent className="border-black-300 max-h-60 w-48 overflow-y-auto bg-[#2e3033] text-white">
               {languages.map((language) => (
                 <SelectItem
                   key={language}

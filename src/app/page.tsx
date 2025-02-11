@@ -13,10 +13,8 @@ import { useRouter } from "next/navigation";
 import { nanoid } from "nanoid";
 import { PiSignInLight } from "react-icons/pi";
 import { useSession, signIn, signOut } from "next-auth/react";
-import { FaListUl } from "react-icons/fa";
 import Image from "next/image";
-import { FaQuestionCircle } from "react-icons/fa";
-import { Avatar, AvatarFallback, AvatarImage } from "./_components/ui/avatar";
+import { Avatar, AvatarImage } from "./_components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -82,7 +80,7 @@ export default function Component() {
             />
             <span className="text-lg font-bold text-white">CodeShare</span>
           </Link>
-          <nav className="hidden space-x-4 md:flex">
+          <nav className="absolute left-1/2 hidden -translate-x-1/2 transform space-x-4 md:flex">
             <Button
               onClick={() => scrollToSection("features")}
               variant="ghost"

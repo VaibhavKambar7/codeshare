@@ -6,8 +6,8 @@ import Editor, {
   type OnChange,
   type OnMount,
 } from "@monaco-editor/react";
-import type * as monaco from "monaco-editor";
-import { themes } from "../../lib/theme";
+import * as monaco from "monaco-editor";
+import { languages, themes } from "../../lib/theme";
 import { api } from "~/trpc/react";
 import { useTheme } from "../context/themeContext";
 import { useSession } from "next-auth/react";
@@ -32,7 +32,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ slug }) => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const lastUpdateRef = useRef<string>("");
   const updateContentMutation = api.editor.updateContent.useMutation();
-  const { theme, title, setTitle } = useTheme();
+  const { language, setLanguage, theme, title, setTitle } = useTheme();
   const { status, data } = useSession();
   const { data: fileData } = api.userFile.getFileData.useQuery(slug);
 
@@ -42,6 +42,17 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ slug }) => {
   const isViewOnlyForNonOwner = !isEditable && fileData?.isViewOnly;
 
   const pathname = usePathname();
+
+  useEffect(() => {
+    if (fileData?.language && languages.includes(fileData.language)) {
+      setLanguage(fileData.language);
+    } else if (typeof window !== "undefined") {
+      const savedLanguage = localStorage.getItem(`editorLanguage_${slug}`);
+      if (savedLanguage && languages.includes(savedLanguage)) {
+        setLanguage(savedLanguage);
+      }
+    }
+  }, [slug, setLanguage, fileData?.language]);
 
   useEffect(() => {
     if (fileData?.title) {
@@ -61,6 +72,15 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ slug }) => {
       }
     }
   }, [slug, fileData?.content]);
+
+  useEffect(() => {
+    if (editorRef.current && language) {
+      const model = editorRef.current.getModel();
+      if (model) {
+        monaco.editor.setModelLanguage(model, language);
+      }
+    }
+  }, [language]);
 
   useEffect(() => {
     loader
@@ -151,6 +171,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ slug }) => {
         title,
         content: value,
         link: slug,
+        language,
       };
 
       saveUserFile({ userData, fileData });
@@ -167,6 +188,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ slug }) => {
         title,
         content: value,
         link: slug,
+        language,
       };
 
       saveUserFile({ userData, fileData });
@@ -181,13 +203,14 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ slug }) => {
     title,
     value,
     slug,
+    language,
     saveUserFile,
   ]);
 
   return (
     <Editor
       height="100vh"
-      defaultLanguage="javascript"
+      language={language}
       theme="custom-theme"
       value={value}
       onMount={onMount}

@@ -9,6 +9,7 @@ const fileDataSchema = z.object({
   title: z.string(),
   content: z.string(),
   link: z.string(),
+  language: z.string().optional(),
   isFavourite: z.boolean().optional(),
   ownerId: z.string().nullable().optional(),
 });

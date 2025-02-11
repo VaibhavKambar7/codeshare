@@ -25,6 +25,7 @@ model File {
   title       String?
   content     String?
   link        String   @unique
+  language    String?
   isFavourite Boolean  @default(false)
   isViewOnly  Boolean  @default(false)
   ownerId     String?
