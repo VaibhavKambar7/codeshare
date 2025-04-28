@@ -13,17 +13,19 @@ import { getWsUrl } from "~/trpc/react";
 interface WebSocketContextType {
   activeUsers: number;
   currentRoom: string | null;
+  // cursors: Map<string, { id: string; x: number; y: number }>;
 }
 
 interface Message {
   type: string;
-  payload: number;
+  payload: number | { id: string; x: number; y: number }[];
   room: string;
 }
 
 export const WebSocketContext = createContext<WebSocketContextType>({
   activeUsers: 0,
   currentRoom: null,
+  // cursors: new Map(),
 });
 
 export const useWebSocket = () => useContext(WebSocketContext);
@@ -36,6 +38,9 @@ export const WebSocketProvider = ({
   roomId: string;
 }) => {
   const [activeUsers, setActiveUsers] = useState(0);
+  // const [cursors, setCursors] = useState<
+  //   Map<string, { id: string; x: number; y: number }>
+  // >(new Map());
   const wsRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
@@ -62,8 +67,17 @@ export const WebSocketProvider = ({
         try {
           const data = JSON.parse(event.data as string) as Message;
           if (data.type === "ACTIVE_USERS" && data.room === roomId) {
-            setActiveUsers(data.payload);
+            setActiveUsers(data.payload as number);
           }
+          // else if (data.type === "CURSORS" && data.room === roomId) {
+          //   const newCursors = new Map();
+          //   (data.payload as { id: string; x: number; y: number }[]).forEach(
+          //     (cursor) => {
+          //       newCursors.set(cursor.id, cursor);
+          //     },
+          //   );
+          //   setCursors(newCursors);
+          // }
         } catch (error) {
           console.error(error);
         }

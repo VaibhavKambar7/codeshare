@@ -16,6 +16,7 @@ import type { z } from "zod";
 import type { fileDataSchema, userDataSchema } from "~/lib/types";
 import { usePathname } from "next/navigation";
 import { PiSpinnerBold } from "react-icons/pi";
+import { nanoid } from "nanoid";
 
 type ThemeKey = keyof typeof themes;
 
@@ -26,14 +27,37 @@ interface CodeEditorProps {
 export type UserData = z.infer<typeof userDataSchema>;
 export type FileData = z.infer<typeof fileDataSchema>;
 
+export interface CursorData {
+  id: string;
+  name: string;
+  email: string;
+  position: {
+    lineNumber: number;
+    column: number;
+  };
+}
+
+export interface WebSocketMessage {
+  type: "INIT" | "CURSOR_UPDATE" | "ACTIVE_USERS" | "CURSORS";
+  id: string;
+  room: string;
+  cursor?: CursorData;
+  payload?: number | CursorData[];
+}
+
 const CodeEditor: React.FC<CodeEditorProps> = ({ slug }) => {
   const [value, setValue] = useState<string>("");
   // const [debouncedValue] = useDebounce(value, DEBOUNCE_TIME);
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const lastUpdateRef = useRef<string>("");
+  const cursorsRef = useRef<Map<string, monaco.editor.IContentWidget>>(
+    new Map(),
+  );
+  const cursorUpdateTimeout = useRef<NodeJS.Timeout>();
   const updateContentMutation = api.editor.updateContent.useMutation();
   const { language, setLanguage, theme, title, setTitle } = useTheme();
   const { status, data } = useSession();
+  const [cursorId] = useState(() => `${data?.user?.email}-${nanoid()}`);
   const { data: fileData } = api.userFile.getFileData.useQuery(slug);
 
   const isEditable =
@@ -100,7 +124,25 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ slug }) => {
       .catch(console.error);
   }, [theme]);
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const updateCursorPosition = (position: monaco.Position) => {
+    // if (!editorRef.current || !data?.user?.name) return;
+
+    if (cursorUpdateTimeout.current) {
+      clearTimeout(cursorUpdateTimeout.current);
+    }
+
+    cursorUpdateTimeout.current = setTimeout(() => {
+      const cursorData: CursorData = {
+        id: cursorId,
+        name: data?.user?.name ?? "Anon",
+        email: data?.user?.email ?? "",
+        position,
+      };
+
+      updateCursorMutation.mutate({ room: slug, cursor: cursorData });
+    }, 50);
+  };
+
   const subscription = api.editor.onContentUpdate.useSubscription(slug, {
     onData: (newContent: string) => {
       if (newContent !== lastUpdateRef.current) {
@@ -115,7 +157,66 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ slug }) => {
     },
   });
 
-  console.log(subscription);
+  const hashString = (str: string) => {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return Math.abs(hash);
+  };
+
+  const cursorSubscription = api.editor.onCursorUpdate.useSubscription(slug, {
+    onData: (data: unknown) => {
+      const cursorData = data as CursorData;
+      if (cursorData.id === cursorId) return;
+
+      if (editorRef.current) {
+        const existingWidget = cursorsRef.current.get(cursorData.email);
+        if (existingWidget) {
+          editorRef.current.removeContentWidget(existingWidget);
+        }
+
+        const widget = {
+          getId: () => `cursor-${cursorData.id}`,
+          getDomNode: () => {
+            const element = document.createElement("div");
+            element.className = "cursor-widget";
+            element.style.position = "absolute";
+            element.style.background = `hsl(${hashString(cursorData.email) % 360}, 70%, 70%)`;
+            element.style.width = "2px";
+            element.style.height = "18px";
+
+            const label = document.createElement("div");
+            label.className = "cursor-label";
+            label.textContent = cursorData.name;
+            label.style.position = "absolute";
+            label.style.top = "-20px";
+            label.style.left = "0";
+            label.style.background = "rgba(250, 120, 120, 0.8)";
+            label.style.padding = "2px 4px";
+            label.style.borderRadius = "3px";
+            label.style.fontSize = "12px";
+            label.style.whiteSpace = "nowrap";
+
+            element.appendChild(label);
+            return element;
+          },
+          getPosition: () => ({
+            position: new monaco.Position(
+              cursorData.position.lineNumber,
+              cursorData.position.column,
+            ),
+            preference: [monaco.editor.ContentWidgetPositionPreference.EXACT],
+          }),
+        };
+
+        editorRef.current.addContentWidget(widget);
+        cursorsRef.current.set(cursorData.email, widget);
+      }
+    },
+  });
+
+  const updateCursorMutation = api.editor.updateCursor.useMutation();
 
   const handleEditorChange: OnChange = (newValue) => {
     if (newValue && newValue !== lastUpdateRef.current) {
@@ -131,6 +232,10 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ slug }) => {
   const onMount: OnMount = (editor) => {
     editorRef.current = editor;
     editor.focus();
+
+    editor.onDidChangeCursorPosition((e) => {
+      updateCursorPosition(e.position);
+    });
   };
 
   const { mutate: saveUserFile } =

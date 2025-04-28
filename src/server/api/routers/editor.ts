@@ -33,6 +33,43 @@ export const editorRouter = createTRPCRouter({
     .mutation(({ input }) => {
       ee.emit("contentUpdate", input);
     }),
+  updateCursor: publicProcedure
+    .input(
+      z.object({
+        room: z.string(),
+        cursor: z.object({
+          id: z.string(),
+          name: z.string(),
+          email: z.string(),
+          position: z.object({
+            lineNumber: z.number(),
+            column: z.number(),
+          }),
+        }),
+      }),
+    )
+    .mutation(({ input }) => {
+      const { room, cursor } = input;
+      ee.emit(`CURSOR_${room}`, cursor);
+      return { success: true };
+    }),
+
+  onCursorUpdate: publicProcedure
+    .input(z.string())
+    .subscription(({ input: room }) => {
+      return observable((emit) => {
+        const onCursor = (data: {
+          id: string;
+          name: string;
+          email: string;
+          position: { lineNumber: number; column: number };
+        }) => emit.next(data);
+        ee.on(`CURSOR_${room}`, onCursor);
+        return () => {
+          ee.off(`CURSOR_${room}`, onCursor);
+        };
+      });
+    }),
 });
 
 export const userFileRouter = createTRPCRouter({

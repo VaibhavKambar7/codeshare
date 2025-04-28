@@ -160,6 +160,20 @@ export default function Component() {
               </Button>
             </div>
           </div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="relative mx-auto mt-20 max-w-6xl overflow-hidden rounded-lg shadow-lg"
+          >
+            <Image
+              src="/assets/hero.png"
+              alt="Hero Image"
+              width={1200}
+              height={600}
+              className="rounded-lg object-cover"
+            />
+          </motion.div>
         </section>
         <section id="features" className="bg-[#111111] px-6 py-24 md:px-12">
           <div className="container mx-auto max-w-6xl">
