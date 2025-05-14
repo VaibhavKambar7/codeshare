@@ -19,7 +19,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [theme, setTheme] = useState<string>("GitHubDark");
+  const [theme, setTheme] = useState<string>("BirdsOfParadise");
   const [language, setLanguage] = useState<string>("javascript");
   const [title, setTitle] = useState<string>("Untitled");
 

@@ -130,17 +130,17 @@ const FloatingActionBar = ({ slug }: { slug: string }) => {
 
   return (
     <div className="fixed bottom-5 left-1/2 z-50 -translate-x-1/2 transform">
-      <div className="flex gap-3 rounded-lg border border-gray-800 bg-[#171717] p-3 shadow-lg">
+      <div className="flex gap-3 rounded-lg border border-gray-300 bg-gray-200 p-3 shadow-lg">
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="flex max-h-[80vh] min-h-[80vh] w-full max-w-lg flex-col overflow-hidden border-2 border-[#36383a] bg-[#2e3033]">
-            <div className="flex flex-row items-center justify-between border-b border-[#36383a]">
+          <DialogContent className="flex max-h-[80vh] min-h-[80vh] w-full max-w-lg flex-col overflow-hidden border-2 border-gray-300 bg-gray-100">
+            <div className="flex flex-row items-center justify-between border-b border-gray-300">
               <ForwardRefButton
                 onClick={() => setSelectedTab("recents")}
                 className={`${
                   selectedTab === "recents"
-                    ? "border-b-2 border-[#474747]"
+                    ? "border-b-2 border-gray-500"
                     : "border-b-2 border-transparent"
-                } box-border flex flex-1 items-center justify-center rounded-none bg-[#2e3033] px-4 py-6 text-center text-sm font-semibold leading-none text-[#d1d1db] hover:bg-[#3f4042]`}
+                } box-border flex flex-1 items-center justify-center rounded-none bg-gray-100 px-4 py-6 text-center text-sm font-semibold leading-none text-gray-700 hover:bg-gray-200`}
               >
                 Recents
               </ForwardRefButton>
@@ -148,9 +148,9 @@ const FloatingActionBar = ({ slug }: { slug: string }) => {
                 onClick={() => setSelectedTab("favourites")}
                 className={`${
                   selectedTab === "favourites"
-                    ? "border-b-2 border-[#474747]"
+                    ? "border-b-2 border-gray-500"
                     : "border-b-2 border-transparent"
-                } box-border flex flex-1 items-center justify-center rounded-none bg-[#2e3033] px-4 py-6 text-center text-sm font-semibold leading-none text-[#d1d1db] hover:bg-[#3f4042]`}
+                } box-border flex flex-1 items-center justify-center rounded-none bg-gray-100 px-4 py-6 text-center text-sm font-semibold leading-none text-gray-700 hover:bg-gray-200`}
               >
                 Favourites
               </ForwardRefButton>
@@ -158,12 +158,12 @@ const FloatingActionBar = ({ slug }: { slug: string }) => {
 
             <div className="flex-1">
               {isLoading && (
-                <div className="mt-40 flex animate-spin items-center justify-center text-3xl text-[#d1d1db]">
+                <div className="mt-40 flex animate-spin items-center justify-center text-3xl text-gray-700">
                   <PiSpinnerBold />
                 </div>
               )}
               {error && (
-                <div className="text-[#d1d1db]">Error loading files</div>
+                <div className="text-gray-700">Error loading files</div>
               )}
               {files && (
                 <>
@@ -173,10 +173,10 @@ const FloatingActionBar = ({ slug }: { slug: string }) => {
                         files.map((file) => (
                           <li
                             key={file.link}
-                            className={`mb-2 cursor-pointer rounded-md p-2 text-[#d1d1db] ${
+                            className={`mb-2 cursor-pointer rounded-md p-2 text-gray-700 ${
                               slug === file.link
-                                ? "bg-[#3a3a3a]"
-                                : "hover:bg-[#262525]"
+                                ? "bg-gray-300"
+                                : "hover:bg-gray-200"
                             }`}
                             onClick={() => handleLink(file.link)}
                           >
@@ -184,7 +184,7 @@ const FloatingActionBar = ({ slug }: { slug: string }) => {
                           </li>
                         ))
                       ) : (
-                        <div className="text-center text-[#d1d1db]">
+                        <div className="text-center text-gray-700">
                           No files found
                         </div>
                       )}
@@ -197,10 +197,10 @@ const FloatingActionBar = ({ slug }: { slug: string }) => {
                           .map((file) => (
                             <li
                               key={file.link}
-                              className={`mb-2 cursor-pointer rounded-md p-2 text-[#d1d1db] ${
+                              className={`mb-2 cursor-pointer rounded-md p-2 text-gray-700 ${
                                 slug === file.link
-                                  ? "bg-[#3a3a3a]"
-                                  : "hover:bg-[#262525]"
+                                  ? "bg-gray-300"
+                                  : "hover:bg-gray-200"
                               }`}
                               onClick={() => handleLink(file.link)}
                             >
@@ -208,7 +208,7 @@ const FloatingActionBar = ({ slug }: { slug: string }) => {
                             </li>
                           ))
                       ) : (
-                        <div className="text-center text-[#d1d1db]">
+                        <div className="text-center text-gray-700">
                           No files found
                         </div>
                       )}
@@ -224,7 +224,7 @@ const FloatingActionBar = ({ slug }: { slug: string }) => {
             <TooltipTrigger asChild>
               <ForwardRefButton
                 variant="ghost"
-                className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#212121] p-0 text-white hover:bg-[#313131] hover:text-white"
+                className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-300 p-0 text-black hover:bg-gray-400 hover:text-black"
                 onClick={toggleFullscreen}
               >
                 <>
@@ -232,7 +232,7 @@ const FloatingActionBar = ({ slug }: { slug: string }) => {
                 </>
               </ForwardRefButton>
             </TooltipTrigger>
-            <TooltipContent className="mb-3 border-0 bg-black text-white">
+            <TooltipContent className="mb-3 border-0 bg-white text-black">
               <p>Enter fullscreen</p>
             </TooltipContent>
           </Tooltip>
@@ -240,7 +240,7 @@ const FloatingActionBar = ({ slug }: { slug: string }) => {
             <TooltipTrigger asChild>
               <ForwardRefButton
                 variant="ghost"
-                className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#212121] p-0 text-white hover:bg-[#2d2d2d] hover:text-white"
+                className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-300 p-0 text-black hover:bg-gray-400 hover:text-black"
                 onClick={handleCopy}
               >
                 <AnimatePresence initial={false} mode="wait">
@@ -263,7 +263,7 @@ const FloatingActionBar = ({ slug }: { slug: string }) => {
                 </AnimatePresence>
               </ForwardRefButton>
             </TooltipTrigger>
-            <TooltipContent className="mb-3 border-0 bg-black text-white">
+            <TooltipContent className="mb-3 border-0 bg-white text-black">
               <p>{isCopied ? "Copied!" : "Copy"}</p>
             </TooltipContent>
           </Tooltip>
@@ -272,7 +272,7 @@ const FloatingActionBar = ({ slug }: { slug: string }) => {
               <ForwardRefButton
                 variant="ghost"
                 onClick={handleFavourite}
-                className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#212121] p-0 text-white hover:bg-[#2d2d2d] hover:text-white"
+                className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-300 p-0 text-black hover:bg-gray-400 hover:text-black"
                 aria-label={
                   isFavourite ? "Added to favorites" : "Removed from favorites"
                 }
@@ -284,7 +284,7 @@ const FloatingActionBar = ({ slug }: { slug: string }) => {
                 />
               </ForwardRefButton>
             </TooltipTrigger>
-            <TooltipContent className="mb-3 border-0 bg-black text-white">
+            <TooltipContent className="mb-3 border-0 bg-white text-black">
               <p>
                 {!isFavourite ? "Add to favorites" : "Remove from favorites"}
               </p>
@@ -297,18 +297,18 @@ const FloatingActionBar = ({ slug }: { slug: string }) => {
                   <TooltipTrigger asChild>
                     <ForwardRefButton
                       variant="ghost"
-                      className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#212121] p-0 text-white hover:bg-[#2d2d2d] hover:text-white"
+                      className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-300 p-0 text-black hover:bg-gray-400 hover:text-black"
                     >
-                      <VscSettings className="h-4 w-4" />
+                      <VscSettings className="h-5 w-5" />
                     </ForwardRefButton>
                   </TooltipTrigger>
-                  <TooltipContent className="mb-3 border-0 bg-black text-white">
+                  <TooltipContent className="mb-3 border-0 bg-white text-black">
                     <p>Settings</p>
                   </TooltipContent>
                 </Tooltip>
               </div>
             </SheetTrigger>
-            <SheetContent className="bg-[#1e1e1e] text-white">
+            <SheetContent className="bg-gray-100 text-black">
               <Sidebar slug={slug} />
             </SheetContent>
           </Sheet>
@@ -316,13 +316,13 @@ const FloatingActionBar = ({ slug }: { slug: string }) => {
             <TooltipTrigger asChild>
               <ForwardRefButton
                 variant="ghost"
-                className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#212121] p-0 text-white hover:bg-[#313131] hover:text-white"
+                className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-300 p-0 text-black hover:bg-gray-400 hover:text-black"
                 onClick={handleSearch}
               >
-                <MdManageSearch className="h-4 w-4" />
+                <MdManageSearch className="h-5 w-5" />
               </ForwardRefButton>
             </TooltipTrigger>
-            <TooltipContent className="mb-3 border-0 bg-black text-white">
+            <TooltipContent className="mb-3 border-0 bg-white text-black">
               <p>Search files (CTRL + K)</p>
             </TooltipContent>
           </Tooltip>

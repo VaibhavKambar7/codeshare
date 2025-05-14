@@ -11,7 +11,6 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import { useTheme } from "../context/themeContext";
 import { useWebSocket } from "../context/webSocketContext";
 import { FaUser } from "react-icons/fa6";
-import { Avatar, AvatarImage } from "./ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +23,7 @@ import { Switch } from "./ui/switch";
 import { Label } from "./ui/label";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
+import { Avatar, AvatarImage } from "./ui/avatar";
 
 const Navbar = ({ slug }: { slug: string }) => {
   const { title, setTitle } = useTheme();
@@ -43,7 +43,8 @@ const Navbar = ({ slug }: { slug: string }) => {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setCurrentUrl(window.location.href);
+      // setCurrentUrl(window.location.href);
+      setCurrentUrl("https://codeshare.lol/f/5EvZDHxcLd");
     }
   }, []);
 
@@ -104,7 +105,7 @@ const Navbar = ({ slug }: { slug: string }) => {
   console.log(urlToCopy);
 
   return (
-    <div className="flex h-16 items-center justify-between bg-[#1f1e1e] px-4 shadow-lg">
+    <div className="flex h-16 items-center justify-between bg-gray-200 px-4 shadow-lg">
       <div className="flex items-center gap-6">
         <Link href="/" className="transition-opacity hover:opacity-80">
           <Image
@@ -119,13 +120,13 @@ const Navbar = ({ slug }: { slug: string }) => {
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-64 border-none bg-[#212121] text-sm text-white placeholder-gray-400 focus:border-transparent focus:outline-none focus:ring-0"
+          className="w-64 border-none bg-gray-300 text-sm text-black placeholder-gray-700 focus:border-transparent focus:outline-none focus:ring-0"
           placeholder="Enter title..."
         />
       </div>
       <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2 text-sm text-gray-400">
-          <FaUser size="14" className="text-gray-400" />
+        <div className="flex items-center gap-2 text-sm text-gray-700">
+          <FaUser size="14" className="text-gray-700" />
           <span>{activeUsers}</span>
         </div>
         <Popover>
@@ -133,7 +134,7 @@ const Navbar = ({ slug }: { slug: string }) => {
             <Button
               variant="outline"
               size="sm"
-              className="border-0 bg-[#2D2D2D] text-white transition-colors duration-200 hover:bg-[#3a3a3a] hover:text-white"
+              className="border-0 bg-gray-300 text-black transition-colors duration-200 hover:bg-gray-400 hover:text-black"
               onClick={() => setUrlToCopy(currentUrl)}
             >
               <FiShare2 size="14" className="mr-2" />
@@ -141,7 +142,7 @@ const Navbar = ({ slug }: { slug: string }) => {
             </Button>
           </PopoverTrigger>
           <PopoverContent
-            className="mb-6 w-80 border border-gray-700 bg-[#212121] p-3 shadow-xl"
+            className="mb-6 w-80 border border-gray-300 bg-gray-200 p-3 shadow-xl"
             align="end"
           >
             <div className="space-y-4">
@@ -149,12 +150,12 @@ const Navbar = ({ slug }: { slug: string }) => {
                 <Input
                   value={currentUrl + (isViewOnly ? "?mode=view" : "")}
                   readOnly
-                  className="flex-1 border-none bg-[#2D2D2D] text-sm text-white placeholder-gray-400 focus:border-transparent focus:outline-none focus:ring-0"
+                  className="flex-1 border-none bg-gray-300 text-sm text-black placeholder-gray-700 focus:border-transparent focus:outline-none focus:ring-0"
                 />
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="h-9 w-9 transition-colors duration-200 hover:bg-[#3a3a3a]"
+                  className="h-9 w-9 transition-colors duration-200 hover:bg-gray-300"
                   onClick={handleCopy}
                 >
                   <AnimatePresence mode="wait" initial={false}>
@@ -166,9 +167,9 @@ const Navbar = ({ slug }: { slug: string }) => {
                       transition={{ duration: 0.15 }}
                     >
                       {isCopied ? (
-                        <FiCheck size="14" className="text-green-500" />
+                        <FiCheck size="14" className="text-black" />
                       ) : (
-                        <FiCopy size="14" className="text-white" />
+                        <FiCopy size="14" className="text-black" />
                       )}
                     </motion.div>
                   </AnimatePresence>
@@ -180,7 +181,7 @@ const Navbar = ({ slug }: { slug: string }) => {
                   <div className="flex items-center justify-between">
                     <Label
                       htmlFor="view-only"
-                      className="text-sm text-gray-300"
+                      className="text-sm text-gray-700"
                     >
                       View-only mode
                     </Label>
@@ -193,64 +194,57 @@ const Navbar = ({ slug }: { slug: string }) => {
                         isViewOnlyLoading
                       }
                       onCheckedChange={handleViewOnlyToggle}
-                      className="3x1"
+                      className="3x1 mb-2 text-gray-100"
                     />
                   </div>
                   <div>
                     <Label
                       htmlFor="view-only"
-                      className="justify-center text-xs text-[#676565]"
+                      className="mt-1 justify-center text-xs text-[#676565]"
                     >
                       When enabled, nobody can modify this file, except you.
                     </Label>
                   </div>
                 </div>
               ) : (
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-gray-700">
                   {/* Sign in to enable view-only sharing */}
                 </p>
               )}
             </div>
           </PopoverContent>
         </Popover>
-        {
-          // status === "loading" ? (
-          // <Avatar className="h-8 w-8">
-          //   <AvatarFallback>😎</AvatarFallback>
-          // </Avatar>
-          // ) :
-          status === "authenticated" ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild={true}>
-                <Avatar className="h-8 w-8 cursor-pointer ring-offset-background transition-opacity hover:opacity-80">
-                  <AvatarImage src={image ?? ""} />
-                  {/* <AvatarFallback>😎</AvatarFallback> */}
-                </Avatar>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="end"
-                className="w-40 border border-gray-700 bg-[#1f1e1e] text-white shadow-xl"
-              >
-                <DropdownMenuItem
-                  onClick={handleSignout}
-                  className="cursor-pointer transition-colors duration-200 hover:bg-[#2a2a2a]"
-                >
-                  Sign Out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <Button
-              onClick={handleSignin}
-              variant="outline"
-              size="sm"
-              className="border-0 bg-[#2D2D2D] text-white transition-colors duration-200 hover:bg-[#3a3a3a] hover:text-white"
+        {status === "authenticated" ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild={true}>
+              <Avatar className="h-8 w-8 cursor-pointer ring-offset-background transition-opacity hover:opacity-80">
+                <AvatarImage src={image ?? ""} />
+                {/* <AvatarFallback>😎</AvatarFallback> */}
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="w-40 border border-gray-300 bg-gray-200 text-black shadow-xl"
             >
-              <PiSignInLight size="16" className="mr-2" />
-              Sign In
-            </Button>
-          )
-        }
+              <DropdownMenuItem
+                onClick={handleSignout}
+                className="cursor-pointer transition-colors duration-200 hover:bg-gray-300"
+              >
+                Sign Out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <Button
+            onClick={handleSignin}
+            variant="outline"
+            size="sm"
+            className="border-0 bg-gray-300 text-black transition-colors duration-200 hover:bg-gray-400 hover:text-black"
+          >
+            <PiSignInLight size="16" className="mr-2" />
+            Sign In
+          </Button>
+        )}
       </div>
     </div>
   );

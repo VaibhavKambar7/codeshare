@@ -22,11 +22,11 @@ const EditorPage = () => {
   }, []);
 
   return (
-    <>
+    <div className="scrollbar-hide">
       {!isFullscreen && <Navbar slug={slug} />}
       <CodeEditor slug={slug} />
       {!isFullscreen && <FloatingActionBar slug={slug} />}
-    </>
+    </div>
   );
 };
 

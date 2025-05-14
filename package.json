@@ -21,7 +21,9 @@
     "postinstall": "prisma generate",
     "prod:wss": "cross-env NODE_ENV=production WS_PORT=3001 node dist/server/wsServer.js",
     "next-start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
